@@ -1,5 +1,5 @@
 import { cn } from '@/utils/cn';
-import Container from './-Container';
+import Evaluation from './-Evaluation';
 import Hero from './-Hero';
 
 export default function Landings() {
@@ -11,9 +11,7 @@ export default function Landings() {
       )}
     >
       <Hero />
-      <section>
-        <Container>1</Container>
-      </section>
+      <Evaluation />
     </div>
   );
 }
