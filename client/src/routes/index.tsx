@@ -1,5 +1,5 @@
-import { Button } from '@/components/ui/Button';
 import { createFileRoute } from '@tanstack/react-router';
+import Landings from './-landings/-index';
 
 export const Route = createFileRoute('/')({
   component: Index,
@@ -7,15 +7,8 @@ export const Route = createFileRoute('/')({
 
 function Index() {
   return (
-    <div className="flex flex-col gap-4">
-      <Button variant="primary">primary</Button>
-      <Button variant="secondary">secondary</Button>
-      <Button variant="tertiary" disabled>
-        tertinary
-      </Button>
-      <Button variant="ghost" disabled>
-        ghost
-      </Button>
+    <div className="mx-auto max-w-360 px-10 pt-2">
+      <Landings />
     </div>
   );
 }
