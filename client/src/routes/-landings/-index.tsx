@@ -1,6 +1,9 @@
 import { cn } from '@/utils/cn';
 import Evaluation from './-Evaluation';
+import Footer from './-Footer';
 import Hero from './-Hero';
+import Result from './-Result';
+import Tiers from './-Tiers';
 
 export default function Landings() {
   return (
@@ -12,6 +15,9 @@ export default function Landings() {
     >
       <Hero />
       <Evaluation />
+      <Result />
+      <Tiers />
+      <Footer />
     </div>
   );
 }
