@@ -1,1 +1,59 @@
-@import "tailwindcss";
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --c-bg: #ffffff;
+  --c-card: #f6f8fa;
+  --c-subtle: #eaeef2;
+  --c-border: #d0d7de;
+  --c-muted2: #8c959f;
+  --c-muted: #57606a;
+  --c-text: #24292f;
+  --c-heading: #1f2328;
+  --c-hover: #f3f4f6;
+}
+
+.dark {
+  --c-bg: #0d1117;
+  --c-card: #161b22;
+  --c-subtle: #21262d;
+  --c-border: #30363d;
+  --c-muted2: #484f58;
+  --c-muted: #8b949e;
+  --c-text: #c9d1d9;
+  --c-heading: #f0f6fc;
+  --c-hover: #1c2128;
+}
+
+@theme {
+  --font-sans: 'Pretendard Variable', Pretendard, -apple-system, sans-serif;
+}
+
+@theme inline {
+  --color-bg: var(--c-bg);
+  --color-card: var(--c-card);
+  --color-subtle: var(--c-subtle);
+  --color-border: var(--c-border);
+  --color-muted-2: var(--c-muted2);
+  --color-muted: var(--c-muted);
+  --color-text: var(--c-text);
+  --color-heading: var(--c-heading);
+  --color-hover: var(--c-hover);
+
+  /* 액센트 — 모드 무관, 고정값 */
+  --color-blue: #58a6ff;
+  --color-blue-btn: #1f6feb;
+  --color-green: #3fb950;
+  --color-green-btn: #238636;
+  --color-red: #f85149;
+  --color-yellow: #d29922;
+
+  /* 티어 */
+  --color-tier-bronze: #c9702e;
+  --color-tier-silver: #8d9db2;
+  --color-tier-gold: #ec9a00;
+  --color-tier-platinum: #1cbf8a;
+  --color-tier-diamond: #00b4fc;
+}
