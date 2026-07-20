@@ -21,7 +21,7 @@ function Header() {
   if (isLoginPage) return null;
 
   return (
-    <header className="text-heading fixed right-0 left-0 flex items-center px-10 pt-2">
+    <header className="text-heading bg-bg sticky top-0 right-0 left-0 z-10 flex items-center px-10 pt-2">
       <LogoText className="flex-1" />
       <div className="flex items-center gap-2">
         <ThemeToggleButton />

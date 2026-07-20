@@ -6,36 +6,37 @@ import {
 } from '@/features/demo/pipeline/hooks/usePipelineDemo';
 import { cn } from '@/utils/cn';
 import { useEffect, useRef } from 'react';
+import Container from './-Container';
 
 export default function Hero() {
   return (
-    <section
-      className={cn(
-        'gap-4 space-y-4 pt-16 md:flex md:flex-row md:items-center',
-      )}
-    >
-      <div className="flex flex-col gap-4 md:flex-1">
-        <div className="text-blue text-xs font-semibold">
-          AI CODE REVIEW · RUBRIC GRADING
+    <section>
+      <Container
+        className={cn('gap-4 space-y-4', 'md:flex md:flex-row md:items-center')}
+      >
+        <div className="flex flex-col gap-4 md:flex-1">
+          <div className="text-blue text-xs font-semibold">
+            AI CODE REVIEW · RUBRIC GRADING
+          </div>
+          <h1 className="text-heading text-2xl font-extrabold">
+            PR을 올리면, 채점이 시작됩니다
+          </h1>
+          <p className="text-muted text-">
+            실무형 과제를 Git 워크플로우 그대로 풀고, 당신이 놓친 것을 AI
+            리뷰어가 라인 단위로 짚어줍니다.
+          </p>
+          <div className="flex flex-col gap-2 md:flex-row">
+            <Link to="/login" variant="primary" size="lg">
+              Github로 시작하기
+            </Link>
+            <Link to="/submissions" size="lg">
+              과제 둘러보기
+            </Link>
+          </div>
         </div>
-        <h1 className="text-heading text-2xl font-extrabold">
-          PR을 올리면, 채점이 시작됩니다
-        </h1>
-        <p className="text-muted text-">
-          실무형 과제를 Git 워크플로우 그대로 풀고, 당신이 놓친 것을 AI 리뷰어가
-          라인 단위로 짚어줍니다.
-        </p>
-        <div className="flex flex-col gap-2 md:flex-row">
-          <Link to="/login" variant="primary" size="lg">
-            Github로 시작하기
-          </Link>
-          <Link to="/submissions" size="lg">
-            과제 둘러보기
-          </Link>
-        </div>
-      </div>
 
-      <PipelineDemo />
+        <PipelineDemo />
+      </Container>
     </section>
   );
 }

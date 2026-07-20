@@ -6,9 +6,5 @@ export const Route = createFileRoute('/')({
 });
 
 function Index() {
-  return (
-    <div className="mx-auto max-w-360 px-10 pt-2">
-      <Landings />
-    </div>
-  );
+  return <Landings />;
 }
