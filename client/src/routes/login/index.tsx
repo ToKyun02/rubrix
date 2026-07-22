@@ -9,12 +9,28 @@ import {
 } from '@/composition-components/Card';
 import ThemeToggleButton from '@/features/theme/components/ThemeToggleButton';
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { z } from 'zod';
+
+const loginSearchSchema = z.object({
+  error: z.optional(z.string().min(1)),
+});
+
+const ERROR_MESSAGES: Record<string, string> = {
+  access_denied: 'GitHub 인증을 취소했습니다.',
+  no_code: '인가 코드가 존재하지 않습니다.',
+};
+
+const DEFAULT_ERROR_MESSAGE =
+  '로그인 중 오류가 발생했습니다. 다시 시도해주세요.';
 
 export const Route = createFileRoute('/login/')({
   component: LoginPage,
+  validateSearch: loginSearchSchema,
 });
 
 function LoginPage() {
+  const { error } = Route.useSearch();
+
   const handleLogin = () => {
     const params = new URLSearchParams({
       client_id: import.meta.env.VITE_GITHUB_CLIENT_ID,
@@ -37,6 +53,11 @@ function LoginPage() {
                 GitHub 계정으로 로그인하고 과제 채점을 시작하세요
               </CardDescription>
             </div>
+            {error && (
+              <p className="text-red text-[12.5px]">
+                {ERROR_MESSAGES[error] ?? DEFAULT_ERROR_MESSAGE}
+              </p>
+            )}
             <Button
               variant="primary"
               size="lg"

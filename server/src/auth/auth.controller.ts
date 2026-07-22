@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Controller,
   Get,
   Post,
@@ -36,7 +35,7 @@ export class AuthController {
     const clientUrl = this.config.get('CLIENT_URL');
 
     if (error) return res.redirect(`${clientUrl}/login?error=${error}`);
-    if (!code) throw new BadRequestException('code가 없습니다.');
+    if (!code) return res.redirect(`${clientUrl}/login?error=node_code`);
 
     const { token } = await this.authService.loginWithGithub(code);
 
