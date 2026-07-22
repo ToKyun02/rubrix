@@ -15,6 +15,14 @@ export const Route = createFileRoute('/login/')({
 });
 
 function LoginPage() {
+  const handleLogin = () => {
+    const params = new URLSearchParams({
+      client_id: import.meta.env.VITE_GITHUB_CLIENT_ID,
+      scope: 'read:user user:email',
+    });
+    window.location.href = `https://github.com/login/oauth/authorize?${params.toString()}`;
+  };
+
   return (
     <div className="bg-bg flex min-h-screen flex-col">
       <Header />
@@ -29,7 +37,12 @@ function LoginPage() {
                 GitHub 계정으로 로그인하고 과제 채점을 시작하세요
               </CardDescription>
             </div>
-            <Button variant="primary" size="lg" className="w-full gap-2.5">
+            <Button
+              variant="primary"
+              size="lg"
+              className="w-full gap-2.5"
+              onClick={handleLogin}
+            >
               <Github className="h-4.5 w-4.5" />
               GitHub로 계속하기
             </Button>
