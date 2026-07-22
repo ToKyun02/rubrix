@@ -1,4 +1,15 @@
-import { Controller, Get, Query, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Headers,
+  Post,
+  Query,
+  Req,
+  Res,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
+import type { RawBodyRequest } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { Request, Response } from 'express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -25,10 +36,14 @@ export class GithubAppController {
       return res.redirect(`${clientUrl}?github_app=cancelled`);
     }
 
-    await this.githubAppService.saveInstallation(
-      Number(installationId),
-      req.user!.sub,
-    );
+    try {
+      await this.githubAppService.saveInstallation(
+        Number(installationId),
+        req.user!.sub,
+      );
+    } catch {
+      return res.redirect(`${clientUrl}?github_app=error`);
+    }
 
     return res.redirect(`${clientUrl}?github_app=connected`);
   }
@@ -44,5 +59,26 @@ export class GithubAppController {
       connected: !!installation,
       accountLogin: installation?.accountLogin ?? null,
     };
+  }
+
+  @Post('webhook')
+  async webhook(
+    @Req() req: RawBodyRequest<Request>,
+    @Headers('x-hub-signature-256') signature: string,
+    @Headers('x-github-event') event: string,
+  ) {
+    const isValid = this.githubAppService.verifyWebhookSignature(
+      req.rawBody!,
+      signature,
+    );
+    if (!isValid) throw new UnauthorizedException();
+
+    if (event === 'installation' && req.body.action === 'deleted') {
+      await this.githubAppService.deleteInstallation(
+        req.body.installation.id,
+      );
+    }
+
+    return { received: true };
   }
 }

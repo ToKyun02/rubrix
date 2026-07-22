@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import * as crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -38,6 +39,10 @@ export class GithubAppService {
       },
     );
 
+    if (!res.ok) {
+      throw new BadRequestException('GitHub App 설치 정보 조회에 실패했습니다.');
+    }
+
     const data = (await res.json()) as GithubInstallationResponse;
     return data.account.login;
   }
@@ -54,5 +59,26 @@ export class GithubAppService {
 
   async getInstallationByUserId(userId: string) {
     return this.prisma.githubInstallation.findUnique({ where: { userId } });
+  }
+
+  async deleteInstallation(installationId: number) {
+    await this.prisma.githubInstallation.deleteMany({
+      where: { installationId },
+    });
+  }
+
+  verifyWebhookSignature(rawBody: Buffer, signature?: string): boolean {
+    if (!signature) return false;
+
+    const secret = this.config.getOrThrow<string>('GITHUB_APP_WEBHOOK_SECRET');
+    const expected = Buffer.from(
+      'sha256=' + crypto.createHmac('sha256', secret).update(rawBody).digest('hex'),
+    );
+    const actual = Buffer.from(signature);
+
+    return (
+      expected.length === actual.length &&
+      crypto.timingSafeEqual(expected, actual)
+    );
   }
 }
