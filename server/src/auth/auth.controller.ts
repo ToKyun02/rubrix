@@ -35,7 +35,7 @@ export class AuthController {
     const clientUrl = this.config.get('CLIENT_URL');
 
     if (error) return res.redirect(`${clientUrl}/login?error=${error}`);
-    if (!code) return res.redirect(`${clientUrl}/login?error=node_code`);
+    if (!code) return res.redirect(`${clientUrl}/login?error=no_code`);
 
     const { token } = await this.authService.loginWithGithub(code);
 
