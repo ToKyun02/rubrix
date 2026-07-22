@@ -33,8 +33,8 @@ const CARDS = [
   },
   {
     no: '03',
-    title: 'GitHub PR 코멘트 & Rubrix 점수',
-    desc: 'AI 코멘트는 GitHub PR 라인에, 점수·회차 비교는 Rubrix 리포트에서 확인합니다.',
+    title: 'Rubrix 리포트로 결과 확인',
+    desc: '라인별 AI 코멘트와 점수·회차 비교를 Rubrix 리포트 한 화면에서 확인합니다.',
     preview: (
       <div className="flex items-baseline gap-2">
         <span className="text-heading text-2xl font-extrabold">87</span>
