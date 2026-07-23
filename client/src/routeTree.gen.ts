@@ -10,12 +10,20 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as LoginIndexRouteImport } from './routes/login/index'
 import { Route as SubmissionsIndexRouteImport } from './routes/submissions/index'
+import { Route as AdminAssignmentsIndexRouteImport } from './routes/admin/assignments/index'
+import { Route as AdminAssignmentsIdRouteImport } from './routes/admin/assignments/$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRouteRoute = AdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginIndexRoute = LoginIndexRouteImport.update({
@@ -28,33 +36,72 @@ const SubmissionsIndexRoute = SubmissionsIndexRouteImport.update({
   path: '/submissions/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminAssignmentsIndexRoute = AdminAssignmentsIndexRouteImport.update({
+  id: '/assignments/',
+  path: '/assignments/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAssignmentsIdRoute = AdminAssignmentsIdRouteImport.update({
+  id: '/assignments/$id',
+  path: '/assignments/$id',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
   '/login/': typeof LoginIndexRoute
   '/submissions/': typeof SubmissionsIndexRoute
+  '/admin/assignments/$id': typeof AdminAssignmentsIdRoute
+  '/admin/assignments/': typeof AdminAssignmentsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
   '/login': typeof LoginIndexRoute
   '/submissions': typeof SubmissionsIndexRoute
+  '/admin/assignments/$id': typeof AdminAssignmentsIdRoute
+  '/admin/assignments': typeof AdminAssignmentsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
   '/login/': typeof LoginIndexRoute
   '/submissions/': typeof SubmissionsIndexRoute
+  '/admin/assignments/$id': typeof AdminAssignmentsIdRoute
+  '/admin/assignments/': typeof AdminAssignmentsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login/' | '/submissions/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/login/'
+    | '/submissions/'
+    | '/admin/assignments/$id'
+    | '/admin/assignments/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/submissions'
-  id: '__root__' | '/' | '/login/' | '/submissions/'
+  to:
+    | '/'
+    | '/admin'
+    | '/login'
+    | '/submissions'
+    | '/admin/assignments/$id'
+    | '/admin/assignments'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/login/'
+    | '/submissions/'
+    | '/admin/assignments/$id'
+    | '/admin/assignments/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRouteRoute: typeof AdminRouteRouteWithChildren
   LoginIndexRoute: typeof LoginIndexRoute
   SubmissionsIndexRoute: typeof SubmissionsIndexRoute
 }
@@ -66,6 +113,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login/': {
@@ -82,11 +136,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SubmissionsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/assignments/': {
+      id: '/admin/assignments/'
+      path: '/assignments'
+      fullPath: '/admin/assignments/'
+      preLoaderRoute: typeof AdminAssignmentsIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/assignments/$id': {
+      id: '/admin/assignments/$id'
+      path: '/assignments/$id'
+      fullPath: '/admin/assignments/$id'
+      preLoaderRoute: typeof AdminAssignmentsIdRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
   }
 }
 
+interface AdminRouteRouteChildren {
+  AdminAssignmentsIdRoute: typeof AdminAssignmentsIdRoute
+  AdminAssignmentsIndexRoute: typeof AdminAssignmentsIndexRoute
+}
+
+const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminAssignmentsIdRoute: AdminAssignmentsIdRoute,
+  AdminAssignmentsIndexRoute: AdminAssignmentsIndexRoute,
+}
+
+const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
+  AdminRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRouteRoute: AdminRouteRouteWithChildren,
   LoginIndexRoute: LoginIndexRoute,
   SubmissionsIndexRoute: SubmissionsIndexRoute,
 }

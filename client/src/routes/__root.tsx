@@ -3,8 +3,8 @@ import LogoText from '@/atom-components/LogoText';
 import ThemeToggleButton from '@/features/theme/components/ThemeToggleButton';
 import {
   createRootRoute,
-  Link as RouterLink,
   Outlet,
+  Link as RouterLink,
   useMatchRoute,
 } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
