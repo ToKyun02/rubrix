@@ -34,3 +34,43 @@ model GithubInstallation {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }
+
+enum Tier{
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
+  DIAMOND
+}
+
+enum Track{
+  FRONTEND
+  BACKEND
+  FULLSTACK
+}
+
+model Assignment{
+  id String @id @default(uuid())
+  title String
+  tier Tier
+  track Track
+  tags String[]
+  hoursEstimate Int
+  requirementsMd String
+  publishedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  rubricItems RubricItem[]
+}
+
+model RubricItem{
+  id String @id @default(uuid())
+  name String
+  points Int
+  aiGuide String
+  assignment Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  assignmentId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
