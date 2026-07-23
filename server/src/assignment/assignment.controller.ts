@@ -42,7 +42,7 @@ export class AssignmentController {
 
   @Patch(':id/unpublish')
   unpublish(@Param('id') id: string) {
-    return this.assignmentService.publish(id);
+    return this.assignmentService.unpublish(id);
   }
 
   @Delete(':id')
