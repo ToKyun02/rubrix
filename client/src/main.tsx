@@ -4,12 +4,20 @@ import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { OverlayProvider } from 'overlay-kit';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { Spinner } from './atom-components/Spinner';
 import './index.css';
 import { routeTree } from './routeTree.gen';
 
 const queryClient = new QueryClient();
 
-const router = createRouter({ routeTree, context: { queryClient } });
+const router = createRouter({
+  routeTree,
+  context: { queryClient },
+  defaultPendingComponent: () => (
+    <Spinner className="fixed top-1/2 left-1/2 size-10" />
+  ),
+  defaultPendingMinMs: 500,
+});
 
 declare module '@tanstack/react-router' {
   interface Register {
