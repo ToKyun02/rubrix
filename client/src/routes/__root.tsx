@@ -1,8 +1,9 @@
 import Link from '@/atom-components/Link';
 import LogoText from '@/atom-components/LogoText';
 import ThemeToggleButton from '@/features/theme/components/ThemeToggleButton';
+import type { QueryClient } from '@tanstack/react-query';
 import {
-  createRootRoute,
+  createRootRouteWithContext,
   Outlet,
   Link as RouterLink,
   useMatchRoute,
@@ -39,4 +40,8 @@ function Header() {
   );
 }
 
-export const Route = createRootRoute({ component: RootLayout });
+export const Route = createRootRouteWithContext<{
+  queryClient: QueryClient;
+}>()({
+  component: RootLayout,
+});

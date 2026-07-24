@@ -6,11 +6,15 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
+import { AdminGuard } from '../auth/guards/admin.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AssignmentService } from './assignment.service';
 import { CreateAssignmentDto } from './dtos/create-assignment.dto';
 import { UpdateAssignmentDto } from './dtos/update-assignment.dto';
 
+@UseGuards(JwtAuthGuard, AdminGuard)
 @Controller('assignments')
 export class AssignmentController {
   constructor(private readonly assignmentService: AssignmentService) {}

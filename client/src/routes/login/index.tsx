@@ -7,8 +7,9 @@ import {
   CardDescription,
   CardTitle,
 } from '@/composition-components/Card';
+import { meQueryOptions } from '@/features/auth/hooks/queries';
 import ThemeToggleButton from '@/features/theme/components/ThemeToggleButton';
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute, Link, redirect } from '@tanstack/react-router';
 import { z } from 'zod';
 
 const loginSearchSchema = z.object({
@@ -24,6 +25,12 @@ const DEFAULT_ERROR_MESSAGE =
   '로그인 중 오류가 발생했습니다. 다시 시도해주세요.';
 
 export const Route = createFileRoute('/login/')({
+  beforeLoad: async ({ context }) => {
+    const me = await context.queryClient
+      .ensureQueryData(meQueryOptions)
+      .catch(() => null);
+    if (me != null) throw redirect({ to: '/' });
+  },
   component: LoginPage,
   validateSearch: loginSearchSchema,
 });

@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
-import { AssignmentService } from './assignment.service';
+import { AuthModule } from '../auth/auth.module';
 import { AssignmentController } from './assignment.controller';
+import { AssignmentService } from './assignment.service';
 
 @Module({
+  imports: [AuthModule],
   providers: [AssignmentService],
-  controllers: [AssignmentController]
+  controllers: [AssignmentController],
 })
 export class AssignmentModule {}
