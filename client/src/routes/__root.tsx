@@ -22,8 +22,9 @@ export default function RootLayout() {
 function Header() {
   const matchRoute = useMatchRoute();
   const isLoginPage = matchRoute({ to: '/login' });
+  const isAdminPage = matchRoute({ to: '/admin', fuzzy: true });
 
-  if (isLoginPage) return null;
+  if (isLoginPage || isAdminPage) return null;
 
   return (
     <header className="text-heading bg-bg sticky top-0 right-0 left-0 z-10 flex items-center px-10 pt-2">

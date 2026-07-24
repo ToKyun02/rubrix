@@ -1,6 +1,9 @@
+import Link from '@/atom-components/Link';
+import { Card } from '@/composition-components/Card';
 import { AssignmentRow } from '@/features/assignment-admin/components/AssignmentRow';
 import { useAssignments } from '@/features/assignment-admin/hooks/queries';
 import { createFileRoute } from '@tanstack/react-router';
+import { Plus } from 'lucide-react';
 
 export const Route = createFileRoute('/admin/assignments/')({
   component: RouteComponent,
@@ -15,13 +18,21 @@ function RouteComponent() {
   return (
     <div>
       <div className="mb-5 flex items-center gap-3.5">
-        <h1 className="text-heading text-xl font-extrabold">과제 관리</h1>
-        <button className="bg-green-btn ml-auto cursor-pointer rounded-md px-4 py-2.5 text-[13px] font-bold text-white">
-          + 새 과제
-        </button>
+        <h1 className="text-heading flex-1 text-xl font-extrabold">
+          과제 관리
+        </h1>
+        <Link
+          variant="primary"
+          size="md"
+          className="px-4 py-2"
+          to="/admin/assignments/new"
+        >
+          <Plus size="16" />
+          <span>과제</span>
+        </Link>
       </div>
-      <div className="bg-card border-border overflow-hidden rounded-[10px] border">
-        <div className="text-muted border-subtle grid grid-cols-[1fr_90px_70px_110px] gap-2 border-b px-4.5 py-2.5 font-mono text-[10.5px] font-bold">
+      <Card className="overflow-hidden">
+        <div className="text-muted border-subtle grid grid-cols-[1fr_90px_70px_110px] gap-2 border-b px-4.5 py-2.5 text-[10.5px] font-bold">
           <span>TITLE</span>
           <span>TIER</span>
           <span>TRACK</span>
@@ -30,7 +41,7 @@ function RouteComponent() {
         {data.map((assignment) => (
           <AssignmentRow key={assignment.id} assignment={assignment} />
         ))}
-      </div>
+      </Card>
     </div>
   );
 }

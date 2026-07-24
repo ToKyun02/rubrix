@@ -1,17 +1,10 @@
+import { TIER_COLOR_CLASS } from '@/features/assignment-admin/constants';
 import {
   usePublishAssignment,
   useUnpublishAssignment,
 } from '@/features/assignment-admin/hooks/queries';
 import type { Assignment } from '@/features/assignment-admin/hooks/types';
 import { Link } from '@tanstack/react-router';
-
-const TIER_COLOR: Record<Assignment['tier'], string> = {
-  BRONZE: 'text-tier-bronze',
-  SILVER: 'text-tier-silver',
-  GOLD: 'text-tier-gold',
-  PLATINUM: 'text-tier-platinum',
-  DIAMOND: 'text-tier-diamond',
-};
 
 interface AssignmentRowProps {
   assignment: Assignment;
@@ -37,7 +30,7 @@ export function AssignmentRow({ assignment }: AssignmentRowProps) {
         {assignment.title}
       </Link>
       <span
-        className={`flex items-center gap-1.5 text-[11px] font-extrabold ${TIER_COLOR[assignment.tier]}`}
+        className={`flex items-center gap-1.5 text-[11px] font-extrabold ${TIER_COLOR_CLASS[assignment.tier]}`}
       >
         <span className="h-1.5 w-1.5 flex-none rotate-45 rounded-[1px] bg-current" />
         {assignment.tier}
@@ -47,7 +40,7 @@ export function AssignmentRow({ assignment }: AssignmentRowProps) {
       <button
         onClick={handleToggle}
         disabled={publish.isPending || unpublish.isPending}
-        className="flex items-center gap-2"
+        className="flex cursor-pointer items-center gap-2"
       >
         <span
           className={`relative h-4.5 w-8 flex-none rounded-full transition-colors ${
