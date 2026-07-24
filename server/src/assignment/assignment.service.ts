@@ -8,7 +8,10 @@ export class AssignmentService {
   constructor(private readonly prisma: PrismaService) {}
 
   findAll() {
-    return this.prisma.assignment.findMany({ include: { rubricItems: true } });
+    return this.prisma.assignment.findMany({
+      include: { rubricItems: true },
+      orderBy: { createdAt: 'asc' },
+    });
   }
 
   findOne(id: string) {
