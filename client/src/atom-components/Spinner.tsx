@@ -18,8 +18,6 @@ interface SpinnerProps
   extends SVGProps<SVGSVGElement>, VariantProps<typeof spinnerVariants> {}
 
 export function Spinner({ className, variant, ...props }: SpinnerProps) {
-  console.log(cn('size-4 animate-spin', variant, className));
-  console.log(variant);
   return (
     <Loader2Icon
       role="status"
