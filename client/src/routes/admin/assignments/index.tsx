@@ -1,7 +1,7 @@
 import Link from '@/atom-components/Link';
 import { Card } from '@/composition-components/Card';
-import { AssignmentRow } from '@/features/assignment-admin/components/AssignmentRow';
-import { useAssignments } from '@/features/assignment-admin/hooks/queries';
+import { AssignmentRow } from '@/features/assignment/admin/components/AssignmentRow';
+import { useAdminAssignments } from '@/features/assignment/admin/hooks/queries';
 import { createFileRoute } from '@tanstack/react-router';
 import { Plus } from 'lucide-react';
 
@@ -10,7 +10,7 @@ export const Route = createFileRoute('/admin/assignments/')({
 });
 
 function RouteComponent() {
-  const { data, isPending, isError } = useAssignments();
+  const { data, isPending, isError } = useAdminAssignments();
 
   if (isPending) return <div className="text-muted text-sm">로딩 중...</div>;
   if (isError) return <div className="text-red text-sm">불러오기 실패</div>;

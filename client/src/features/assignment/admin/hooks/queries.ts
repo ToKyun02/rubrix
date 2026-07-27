@@ -1,37 +1,23 @@
+import { assignmentKeys } from '@/features/assignment/hooks/queries';
+import { AssignmentSchema } from '@/features/assignment/hooks/types';
 import { api } from '@/utils/networkHelper';
 import { showToast } from '@/utils/toast';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-  AssignmentSchema,
-  type CreateAssignmentInput,
-  type UpdateAssignmentInput,
-} from './types';
+import type { CreateAssignmentInput, UpdateAssignmentInput } from './types';
 
-export const assignmentKeys = {
-  all: ['assignments'] as const,
-  list: () => [...assignmentKeys.all, 'list'] as const,
-  details: () => [...assignmentKeys.all, 'detail'] as const,
-  detail: (id: string) => [...assignmentKeys.details(), id] as const,
+export const adminAssignmentKeys = {
+  all: ['admin', 'assignments'] as const,
+  list: () => [...adminAssignmentKeys.all, 'list'] as const,
 };
 
 const onMutationError = () => showToast('요청에 실패했습니다', 'error');
 
-export function useAssignments() {
+export function useAdminAssignments() {
   return useQuery({
-    queryKey: assignmentKeys.list(),
+    queryKey: adminAssignmentKeys.list(),
     queryFn: async () => {
-      const data = await api.get('assignments').json();
+      const data = await api.get('admin/assignments').json();
       return AssignmentSchema.array().parse(data);
-    },
-  });
-}
-
-export function useAssignment(id: string) {
-  return useQuery({
-    queryKey: assignmentKeys.detail(id),
-    queryFn: async () => {
-      const data = await api.get(`assignments/${id}`).json();
-      return AssignmentSchema.parse(data);
     },
   });
 }
@@ -39,11 +25,13 @@ export function useAssignment(id: string) {
 export function usePublishAssignment() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => api.patch(`assignments/${id}/publish`).json(),
+    mutationFn: (id: string) =>
+      api.patch(`admin/assignments/${id}/publish`).json(),
     onError: onMutationError,
     onSuccess: (_data, id) => {
       queryClient.invalidateQueries({ queryKey: assignmentKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: assignmentKeys.list() });
+      queryClient.invalidateQueries({ queryKey: adminAssignmentKeys.list() });
     },
   });
 }
@@ -52,11 +40,12 @@ export function useUnpublishAssignment() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) =>
-      api.patch(`assignments/${id}/unpublish`).json(),
+      api.patch(`admin/assignments/${id}/unpublish`).json(),
     onError: onMutationError,
     onSuccess: (_data, id) => {
       queryClient.invalidateQueries({ queryKey: assignmentKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: assignmentKeys.list() });
+      queryClient.invalidateQueries({ queryKey: adminAssignmentKeys.list() });
     },
   });
 }
@@ -65,10 +54,10 @@ export function useCreateAssignment() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: CreateAssignmentInput) =>
-      api.post('assignments', { json: data }).json(),
+      api.post('admin/assignments', { json: data }).json(),
     onError: onMutationError,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: assignmentKeys.list() });
+      queryClient.invalidateQueries({ queryKey: adminAssignmentKeys.list() });
     },
   });
 }
@@ -77,11 +66,12 @@ export function useUpdateAssignment() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: UpdateAssignmentInput) =>
-      api.patch(`assignments/${id}`, { json: data }).json(),
+      api.patch(`admin/assignments/${id}`, { json: data }).json(),
     onError: onMutationError,
     onSuccess: (_data, { id }) => {
       queryClient.invalidateQueries({ queryKey: assignmentKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: assignmentKeys.list() });
+      queryClient.invalidateQueries({ queryKey: adminAssignmentKeys.list() });
     },
   });
 }

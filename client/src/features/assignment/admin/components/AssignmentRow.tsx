@@ -1,9 +1,9 @@
-import { TIER_COLOR_CLASS } from '@/features/assignment-admin/constants';
+import { TIER_COLOR_CLASS } from '@/features/assignment/constants';
 import {
   usePublishAssignment,
   useUnpublishAssignment,
-} from '@/features/assignment-admin/hooks/queries';
-import type { Assignment } from '@/features/assignment-admin/hooks/types';
+} from '@/features/assignment/admin/hooks/queries';
+import type { Assignment } from '@/features/assignment/hooks/types';
 import { Link } from '@tanstack/react-router';
 
 interface AssignmentRowProps {

@@ -3,11 +3,8 @@ import { Listbox } from '@/atom-components/Listbox';
 import { NumberStepper } from '@/atom-components/NumberStepper';
 import { Card } from '@/composition-components/Card';
 import { Field } from '@/composition-components/Field';
-import {
-  TIER_OPTIONS,
-  TRACK_OPTIONS,
-} from '@/features/assignment-admin/constants';
-import { CreateAssignmentInputSchema } from '@/features/assignment-admin/hooks/types';
+import { TIER_OPTIONS, TRACK_OPTIONS } from '@/features/assignment/constants';
+import { CreateAssignmentInputSchema } from '@/features/assignment/admin/hooks/types';
 import { cn } from '@/utils/cn';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus } from 'lucide-react';
