@@ -14,6 +14,14 @@ export class AssignmentService {
     });
   }
 
+  findPublished() {
+    return this.prisma.assignment.findMany({
+      where: { publishedAt: { not: null } },
+      include: { rubricItems: true },
+      orderBy: { createdAt: 'asc' },
+    });
+  }
+
   findOne(id: string) {
     return this.prisma.assignment.findUnique({
       where: { id },
