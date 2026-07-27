@@ -1,0 +1,37 @@
+import { api } from '@/utils/networkHelper';
+import { showToast } from '@/utils/toast';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { RepoSchema } from './types';
+
+export const repoKeys = {
+  detail: (assignmentId: string) => ['repos', assignmentId] as const,
+};
+
+export function useAssignmentRepo(assignmentId: string) {
+  return useQuery({
+    queryKey: repoKeys.detail(assignmentId),
+    queryFn: async () => {
+      const data = await api.get(`repos/${assignmentId}`).json();
+      return RepoSchema.nullable().parse(data);
+    },
+  });
+}
+
+export function useConnectRepo() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      assignmentId,
+      githubFullName,
+    }: {
+      assignmentId: string;
+      githubFullName: string;
+    }) => api.post('repos', { json: { assignmentId, githubFullName } }).json(),
+    onError: () => showToast('레포 연결에 실패했습니다', 'error'),
+    onSuccess: (_data, { assignmentId }) => {
+      queryClient.invalidateQueries({
+        queryKey: repoKeys.detail(assignmentId),
+      });
+    },
+  });
+}
