@@ -46,7 +46,7 @@ export class AuthController {
       maxAge: ACCESS_TOKEN_TTL_MS,
     });
 
-    return res.redirect(clientUrl);
+    return res.redirect(`${clientUrl}/assignments`);
   }
 
   @Post('logout')

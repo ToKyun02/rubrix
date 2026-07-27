@@ -1,11 +1,18 @@
 import { api } from '@/utils/networkHelper';
-import { queryOptions, useQuery } from '@tanstack/react-query';
+import {
+  queryOptions,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { UserSchema } from './types';
 
 export const meQueryOptions = queryOptions({
   queryKey: ['auth', 'me'],
   queryFn: async () => {
-    const data = await api.get('auth/me').json();
+    const res = await api.get('auth/me', { throwHttpErrors: false });
+    if (res.status === 401) return null;
+    const data = await res.json();
     return UserSchema.parse(data);
   },
   staleTime: 5 * 60 * 1000,
@@ -14,4 +21,14 @@ export const meQueryOptions = queryOptions({
 
 export function useMe() {
   return useQuery(meQueryOptions);
+}
+
+export function useLogout() {
+  const queryCleint = useQueryClient();
+  return useMutation({
+    mutationFn: () => api.post('auth/logout'),
+    onSuccess: () => {
+      queryCleint.removeQueries({ queryKey: meQueryOptions.queryKey });
+    },
+  });
 }
