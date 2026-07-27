@@ -13,12 +13,4 @@ export class QueryDto {
   @IsInt()
   @Min(1)
   limit: number = 20;
-
-  get take() {
-    return this.limit;
-  }
-
-  get skip() {
-    return this.offset;
-  }
 }

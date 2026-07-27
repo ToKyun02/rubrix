@@ -1,24 +1,41 @@
 import { assignmentKeys } from '@/features/assignment/hooks/queries';
-import { AssignmentSchema } from '@/features/assignment/hooks/types';
+import {
+  PaginatedAssignmentsSchema,
+  type PageParams,
+} from '@/features/assignment/hooks/types';
 import { api } from '@/utils/networkHelper';
 import { showToast } from '@/utils/toast';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import type { CreateAssignmentInput, UpdateAssignmentInput } from './types';
 
 export const adminAssignmentKeys = {
   all: ['admin', 'assignments'] as const,
-  list: () => [...adminAssignmentKeys.all, 'list'] as const,
+  lists: () => [...adminAssignmentKeys.all, 'list'] as const,
+  list: (params: { page: number; pageSize: number }) =>
+    [...adminAssignmentKeys.lists(), params] as const,
 };
 
 const onMutationError = () => showToast('요청에 실패했습니다', 'error');
 
-export function useAdminAssignments() {
+export function useAdminAssignments({
+  page = 1,
+  pageSize = 20,
+}: PageParams = {}) {
+  const offset = (page - 1) * pageSize;
   return useQuery({
-    queryKey: adminAssignmentKeys.list(),
+    queryKey: adminAssignmentKeys.list({ page, pageSize }),
     queryFn: async () => {
-      const data = await api.get('admin/assignments').json();
-      return AssignmentSchema.array().parse(data);
+      const data = await api
+        .get(`admin/assignments?offset=${offset}&limit=${pageSize}`)
+        .json();
+      return PaginatedAssignmentsSchema.parse(data);
     },
+    placeholderData: keepPreviousData,
   });
 }
 
@@ -30,8 +47,8 @@ export function usePublishAssignment() {
     onError: onMutationError,
     onSuccess: (_data, id) => {
       queryClient.invalidateQueries({ queryKey: assignmentKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: assignmentKeys.list() });
-      queryClient.invalidateQueries({ queryKey: adminAssignmentKeys.list() });
+      queryClient.invalidateQueries({ queryKey: assignmentKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: adminAssignmentKeys.lists() });
     },
   });
 }
@@ -44,8 +61,8 @@ export function useUnpublishAssignment() {
     onError: onMutationError,
     onSuccess: (_data, id) => {
       queryClient.invalidateQueries({ queryKey: assignmentKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: assignmentKeys.list() });
-      queryClient.invalidateQueries({ queryKey: adminAssignmentKeys.list() });
+      queryClient.invalidateQueries({ queryKey: assignmentKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: adminAssignmentKeys.lists() });
     },
   });
 }
@@ -57,7 +74,7 @@ export function useCreateAssignment() {
       api.post('admin/assignments', { json: data }).json(),
     onError: onMutationError,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: adminAssignmentKeys.list() });
+      queryClient.invalidateQueries({ queryKey: adminAssignmentKeys.lists() });
     },
   });
 }
@@ -70,8 +87,8 @@ export function useUpdateAssignment() {
     onError: onMutationError,
     onSuccess: (_data, { id }) => {
       queryClient.invalidateQueries({ queryKey: assignmentKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: assignmentKeys.list() });
-      queryClient.invalidateQueries({ queryKey: adminAssignmentKeys.list() });
+      queryClient.invalidateQueries({ queryKey: assignmentKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: adminAssignmentKeys.lists() });
     },
   });
 }

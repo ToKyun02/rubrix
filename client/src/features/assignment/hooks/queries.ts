@@ -1,21 +1,31 @@
 import { api } from '@/utils/networkHelper';
-import { useQuery } from '@tanstack/react-query';
-import { AssignmentSchema } from './types';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import {
+  AssignmentSchema,
+  PaginatedAssignmentsSchema,
+  type PageParams,
+} from './types';
 
 export const assignmentKeys = {
   all: ['assignments'] as const,
-  list: () => [...assignmentKeys.all, 'list'] as const,
+  lists: () => [...assignmentKeys.all, 'list'] as const,
+  list: (params: { page: number; pageSize: number }) =>
+    [...assignmentKeys.lists(), params] as const,
   details: () => [...assignmentKeys.all, 'detail'] as const,
   detail: (id: string) => [...assignmentKeys.details(), id] as const,
 };
 
-export function useAssignments() {
+export function useAssignments({ page = 1, pageSize = 20 }: PageParams = {}) {
+  const offset = (page - 1) * pageSize;
   return useQuery({
-    queryKey: assignmentKeys.list(),
+    queryKey: assignmentKeys.list({ page, pageSize }),
     queryFn: async () => {
-      const data = await api.get('assignments').json();
-      return AssignmentSchema.array().parse(data);
+      const data = await api
+        .get(`assignments?offset=${offset}&limit=${pageSize}`)
+        .json();
+      return PaginatedAssignmentsSchema.parse(data);
     },
+    placeholderData: keepPreviousData,
   });
 }
 

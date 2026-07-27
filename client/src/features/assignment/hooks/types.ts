@@ -31,6 +31,18 @@ export const AssignmentSchema = z.object({
   rubricItems: z.array(RubricItemSchema),
 });
 
+export const PaginatedAssignmentsSchema = z.object({
+  items: z.array(AssignmentSchema),
+  total: z.number(),
+  limit: z.number(),
+  offset: z.number(),
+});
+
+export interface PageParams {
+  page?: number;
+  pageSize?: number;
+}
+
 export type Tier = z.infer<typeof TierSchema>;
 export type Track = z.infer<typeof TrackSchema>;
 export type RubricItem = z.infer<typeof RubricItemSchema>;

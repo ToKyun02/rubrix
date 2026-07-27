@@ -10,20 +10,20 @@ export class AssignmentService {
   constructor(private readonly prisma: PrismaService) {}
 
   private async paginate(
-    { skip, take }: QueryDto,
+    { limit, offset }: QueryDto,
     where: Prisma.AssignmentWhereInput = {},
   ) {
     const [items, total] = await this.prisma.$transaction([
       this.prisma.assignment.findMany({
         where,
         include: { rubricItems: true },
-        orderBy: { createdAt: 'asc' },
-        skip,
-        take,
+        orderBy: { createdAt: 'desc' },
+        skip: offset,
+        take: limit,
       }),
       this.prisma.assignment.count({ where }),
     ]);
-    return { items, total, skip, take };
+    return { items, total, limit, offset };
   }
 
   findAll(query: QueryDto) {
