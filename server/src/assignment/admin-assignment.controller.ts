@@ -6,12 +6,14 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { AdminGuard } from '../auth/guards/admin.guard';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AssignmentService } from './assignment.service';
 import { CreateAssignmentDto } from './dtos/create-assignment.dto';
+import { QueryDto } from './dtos/query.dto';
 import { UpdateAssignmentDto } from './dtos/update-assignment.dto';
 
 @UseGuards(JwtAuthGuard, AdminGuard)
@@ -20,8 +22,8 @@ export class AdminAssignmentController {
   constructor(private readonly assignmentService: AssignmentService) {}
 
   @Get()
-  findAll() {
-    return this.assignmentService.findAll();
+  findAll(@Query() query: QueryDto) {
+    return this.assignmentService.findAll(query);
   }
 
   @Get(':id')
