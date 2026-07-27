@@ -1,4 +1,4 @@
-import { AdminSidebar } from '@/features/assignment-admin/components/AdminSidebar';
+import { AdminSidebar } from '@/features/assignment/admin/components/AdminSidebar';
 import { meQueryOptions } from '@/features/auth/hooks/queries';
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 

@@ -29,7 +29,7 @@ export const Route = createFileRoute('/login/')({
     const me = await context.queryClient
       .ensureQueryData(meQueryOptions)
       .catch(() => null);
-    if (me != null) throw redirect({ to: '/' });
+    if (me != null) throw redirect({ to: '/assignments' });
   },
   component: LoginPage,
   validateSearch: loginSearchSchema,

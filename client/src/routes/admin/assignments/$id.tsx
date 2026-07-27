@@ -1,5 +1,5 @@
-import { AssignmentEditForm } from '@/features/assignment-admin/components/AssignmentEditForm';
-import { useAssignment } from '@/features/assignment-admin/hooks/queries';
+import { AssignmentEditForm } from '@/features/assignment/admin/components/AssignmentEditForm';
+import { useAssignment } from '@/features/assignment/hooks/queries';
 import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/admin/assignments/$id')({

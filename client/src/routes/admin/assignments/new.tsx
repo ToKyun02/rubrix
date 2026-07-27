@@ -1,8 +1,8 @@
 import {
   AssignmentForm,
   type AssignmentFormValues,
-} from '@/features/assignment-admin/components/AssignmentForm';
-import { useCreateAssignment } from '@/features/assignment-admin/hooks/queries';
+} from '@/features/assignment/admin/components/AssignmentForm';
+import { useCreateAssignment } from '@/features/assignment/admin/hooks/queries';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/admin/assignments/new')({

@@ -1,5 +1,7 @@
 import Link from '@/atom-components/Link';
 import LogoText from '@/atom-components/LogoText';
+import { Profile } from '@/features/auth/components/Profile';
+import { useMe } from '@/features/auth/hooks/queries';
 import ThemeToggleButton from '@/features/theme/components/ThemeToggleButton';
 import type { QueryClient } from '@tanstack/react-query';
 import {
@@ -24,6 +26,7 @@ function Header() {
   const matchRoute = useMatchRoute();
   const isLoginPage = matchRoute({ to: '/login' });
   const isAdminPage = matchRoute({ to: '/admin', fuzzy: true });
+  const { data: me } = useMe();
 
   if (isLoginPage || isAdminPage) return null;
 
@@ -34,7 +37,7 @@ function Header() {
       </RouterLink>
       <div className="flex items-center gap-2">
         <ThemeToggleButton />
-        <Link to="/login">Github로 로그인</Link>
+        {me ? <Profile user={me} /> : <Link to="/login">Github로 로그인</Link>}
       </div>
     </header>
   );

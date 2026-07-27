@@ -1,13 +1,13 @@
 import {
   AssignmentForm,
   type AssignmentFormValues,
-} from '@/features/assignment-admin/components/AssignmentForm';
+} from '@/features/assignment/admin/components/AssignmentForm';
 import {
   usePublishAssignment,
   useUnpublishAssignment,
   useUpdateAssignment,
-} from '@/features/assignment-admin/hooks/queries';
-import type { Assignment } from '@/features/assignment-admin/hooks/types';
+} from '@/features/assignment/admin/hooks/queries';
+import type { Assignment } from '@/features/assignment/hooks/types';
 import { cn } from '@/utils/cn';
 import { useNavigate } from '@tanstack/react-router';
 

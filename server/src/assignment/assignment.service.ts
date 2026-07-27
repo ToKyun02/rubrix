@@ -1,17 +1,37 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { Prisma } from '../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateAssignmentDto } from './dtos/create-assignment.dto';
+import { QueryDto } from './dtos/query.dto';
 import { UpdateAssignmentDto } from './dtos/update-assignment.dto';
 
 @Injectable()
 export class AssignmentService {
   constructor(private readonly prisma: PrismaService) {}
 
-  findAll() {
-    return this.prisma.assignment.findMany({
-      include: { rubricItems: true },
-      orderBy: { createdAt: 'asc' },
-    });
+  private async paginate(
+    { limit, offset }: QueryDto,
+    where: Prisma.AssignmentWhereInput = {},
+  ) {
+    const [items, total] = await this.prisma.$transaction([
+      this.prisma.assignment.findMany({
+        where,
+        include: { rubricItems: true },
+        orderBy: { createdAt: 'desc' },
+        skip: offset,
+        take: limit,
+      }),
+      this.prisma.assignment.count({ where }),
+    ]);
+    return { items, total, limit, offset };
+  }
+
+  findAll(query: QueryDto) {
+    return this.paginate(query);
+  }
+
+  findPublished(query: QueryDto) {
+    return this.paginate(query, { publishedAt: { not: null } });
   }
 
   findOne(id: string) {

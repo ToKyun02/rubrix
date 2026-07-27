@@ -1,56 +1,20 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
-import { AdminGuard } from '../auth/guards/admin.guard';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AssignmentService } from './assignment.service';
-import { CreateAssignmentDto } from './dtos/create-assignment.dto';
-import { UpdateAssignmentDto } from './dtos/update-assignment.dto';
+import { QueryDto } from './dtos/query.dto';
 
-@UseGuards(JwtAuthGuard, AdminGuard)
+@UseGuards(JwtAuthGuard)
 @Controller('assignments')
 export class AssignmentController {
   constructor(private readonly assignmentService: AssignmentService) {}
 
   @Get()
-  findAll() {
-    return this.assignmentService.findAll();
+  findAll(@Query() query: QueryDto) {
+    return this.assignmentService.findPublished(query);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.assignmentService.findOne(id);
-  }
-
-  @Post()
-  create(@Body() dto: CreateAssignmentDto) {
-    return this.assignmentService.create(dto);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateAssignmentDto) {
-    return this.assignmentService.update(id, dto);
-  }
-
-  @Patch(':id/publish')
-  publish(@Param('id') id: string) {
-    return this.assignmentService.publish(id);
-  }
-
-  @Patch(':id/unpublish')
-  unpublish(@Param('id') id: string) {
-    return this.assignmentService.unpublish(id);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.assignmentService.remove(id);
   }
 }
