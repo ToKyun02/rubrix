@@ -6,6 +6,7 @@ import { AssignmentModule } from './assignment/assignment.module';
 import { AuthModule } from './auth/auth.module';
 import { GithubAppModule } from './github-app/github-app.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { RepoModule } from './repo/repo.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { PrismaModule } from './prisma/prisma.module';
     GithubAppModule,
     PrismaModule,
     AssignmentModule,
+    RepoModule,
   ],
   controllers: [AppController],
   providers: [AppService],

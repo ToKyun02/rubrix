@@ -1,3 +1,4 @@
+import type { RawBodyRequest } from '@nestjs/common';
 import {
   Controller,
   Get,
@@ -9,7 +10,6 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import type { RawBodyRequest } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { Request, Response } from 'express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -74,11 +74,28 @@ export class GithubAppController {
     if (!isValid) throw new UnauthorizedException();
 
     if (event === 'installation' && req.body.action === 'deleted') {
-      await this.githubAppService.deleteInstallation(
-        req.body.installation.id,
-      );
+      await this.githubAppService.deleteInstallation(req.body.installation.id);
     }
 
     return { received: true };
+  }
+
+  @Get('repos')
+  @UseGuards(JwtAuthGuard)
+  async repos(@Req() req: Request) {
+    if (req.user == null) {
+      throw new UnauthorizedException();
+    }
+    const installation = await this.githubAppService.getInstallationByUserId(
+      req.user.sub,
+    );
+
+    if (!installation) {
+      return [];
+    }
+
+    return this.githubAppService.listInstallationRepos(
+      installation.installationId,
+    );
   }
 }
