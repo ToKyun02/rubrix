@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as AssignmentsIndexRouteImport } from './routes/assignments/index'
+import { Route as AssignmentsIdRouteImport } from './routes/assignments/$id'
 import { Route as LoginIndexRouteImport } from './routes/login/index'
 import { Route as SubmissionsIndexRouteImport } from './routes/submissions/index'
 import { Route as AdminAssignmentsIndexRouteImport } from './routes/admin/assignments/index'
@@ -32,6 +34,16 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRouteRoute,
+} as any)
+const AssignmentsIndexRoute = AssignmentsIndexRouteImport.update({
+  id: '/assignments/',
+  path: '/assignments/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AssignmentsIdRoute = AssignmentsIdRouteImport.update({
+  id: '/assignments/$id',
+  path: '/assignments/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const LoginIndexRoute = LoginIndexRouteImport.update({
   id: '/login/',
@@ -62,7 +74,9 @@ const AdminAssignmentsNewRoute = AdminAssignmentsNewRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
+  '/assignments/$id': typeof AssignmentsIdRoute
   '/admin/': typeof AdminIndexRoute
+  '/assignments/': typeof AssignmentsIndexRoute
   '/login/': typeof LoginIndexRoute
   '/submissions/': typeof SubmissionsIndexRoute
   '/admin/assignments/$id': typeof AdminAssignmentsIdRoute
@@ -71,7 +85,9 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/assignments/$id': typeof AssignmentsIdRoute
   '/admin': typeof AdminIndexRoute
+  '/assignments': typeof AssignmentsIndexRoute
   '/login': typeof LoginIndexRoute
   '/submissions': typeof SubmissionsIndexRoute
   '/admin/assignments/$id': typeof AdminAssignmentsIdRoute
@@ -82,7 +98,9 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
+  '/assignments/$id': typeof AssignmentsIdRoute
   '/admin/': typeof AdminIndexRoute
+  '/assignments/': typeof AssignmentsIndexRoute
   '/login/': typeof LoginIndexRoute
   '/submissions/': typeof SubmissionsIndexRoute
   '/admin/assignments/$id': typeof AdminAssignmentsIdRoute
@@ -94,7 +112,9 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/assignments/$id'
     | '/admin/'
+    | '/assignments/'
     | '/login/'
     | '/submissions/'
     | '/admin/assignments/$id'
@@ -103,7 +123,9 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/assignments/$id'
     | '/admin'
+    | '/assignments'
     | '/login'
     | '/submissions'
     | '/admin/assignments/$id'
@@ -113,7 +135,9 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
+    | '/assignments/$id'
     | '/admin/'
+    | '/assignments/'
     | '/login/'
     | '/submissions/'
     | '/admin/assignments/$id'
@@ -124,6 +148,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
+  AssignmentsIdRoute: typeof AssignmentsIdRoute
+  AssignmentsIndexRoute: typeof AssignmentsIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
   SubmissionsIndexRoute: typeof SubmissionsIndexRoute
 }
@@ -150,6 +176,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRouteRoute
+    }
+    '/assignments/': {
+      id: '/assignments/'
+      path: '/assignments'
+      fullPath: '/assignments/'
+      preLoaderRoute: typeof AssignmentsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/assignments/$id': {
+      id: '/assignments/$id'
+      path: '/assignments/$id'
+      fullPath: '/assignments/$id'
+      preLoaderRoute: typeof AssignmentsIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/login/': {
       id: '/login/'
@@ -210,6 +250,8 @@ const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRouteRoute: AdminRouteRouteWithChildren,
+  AssignmentsIdRoute: AssignmentsIdRoute,
+  AssignmentsIndexRoute: AssignmentsIndexRoute,
   LoginIndexRoute: LoginIndexRoute,
   SubmissionsIndexRoute: SubmissionsIndexRoute,
 }

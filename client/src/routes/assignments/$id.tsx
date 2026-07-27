@@ -1,0 +1,89 @@
+import { Card } from '@/composition-components/Card';
+import { TIER_COLOR_CLASS, TIER_LABEL } from '@/features/assignment/constants';
+import { useAssignment } from '@/features/assignment/hooks/queries';
+import { createFileRoute, Link } from '@tanstack/react-router';
+
+export const Route = createFileRoute('/assignments/$id')({
+  component: RouteComponent,
+});
+
+function RouteComponent() {
+  const { id } = Route.useParams();
+  const { data: assignment, isPending, isError } = useAssignment(id);
+
+  if (isPending) return <div className="text-muted text-sm">로딩 중...</div>;
+  if (isError) return <div className="text-red text-sm">불러오기 실패</div>;
+
+  return (
+    <div className="mx-auto max-w-270 px-6 py-7">
+      <Link
+        to="/assignments"
+        className="text-muted hover:text-text mb-5 inline-block text-[13px]"
+      >
+        ← 과제 탐색
+      </Link>
+      <div className="mb-2.5 flex gap-2">
+        <span
+          className={`rounded px-2.5 py-1 text-[11px] font-extrabold ${TIER_COLOR_CLASS[assignment.tier]}`}
+        >
+          {TIER_LABEL[assignment.tier]}
+        </span>
+        <span className="bg-subtle text-muted rounded px-2.5 py-1 text-[11px] font-semibold">
+          {assignment.track}
+        </span>
+      </div>
+      <h1 className="text-heading mb-8 text-[26px] font-extrabold">
+        {assignment.title}
+      </h1>
+
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] items-start gap-9">
+        <aside className="flex flex-col gap-4">
+          <Card className="flex flex-col gap-2.5 p-4.5 text-[13px]">
+            <div className="flex justify-between">
+              <span className="text-muted">예상 소요</span>
+              <span>~{assignment.hoursEstimate}h</span>
+            </div>
+            <div className="flex justify-between gap-3">
+              <span className="text-muted flex-none">스택</span>
+              <span className="text-right">{assignment.tags.join(' · ')}</span>
+            </div>
+          </Card>
+        </aside>
+
+        <article className="min-w-0">
+          <h2 className="text-heading mb-3.5 text-lg font-extrabold">
+            요구사항
+          </h2>
+          <p className="text-text mb-8 text-[14.5px] leading-relaxed whitespace-pre-wrap">
+            {assignment.requirementsMd}
+          </p>
+
+          <h2 className="text-heading mb-1.5 text-lg font-extrabold">
+            평가 기준
+          </h2>
+          <p className="text-muted mb-4 text-xs">
+            상세 채점 기준은 제출 후 리포트에서 공개됩니다.
+          </p>
+          <div className="flex flex-col gap-2">
+            {assignment.rubricItems.map((item) => (
+              <Card
+                key={item.id}
+                className="flex items-center gap-3.5 px-4.5 py-3.5"
+              >
+                <span className="text-heading w-9 text-[15px] font-bold">
+                  {item.points}
+                </span>
+                <span className="flex-1 text-[13.5px] font-bold">
+                  {item.name}
+                </span>
+                <span className="text-muted-2 text-[11px]">
+                  🔒 제출 후 공개
+                </span>
+              </Card>
+            ))}
+          </div>
+        </article>
+      </div>
+    </div>
+  );
+}
