@@ -7,7 +7,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { Plus } from 'lucide-react';
 import { z } from 'zod';
 
-const PAGE_SIZE = 7;
+const PAGE_SIZE = 10;
 
 export const Route = createFileRoute('/admin/assignments/')({
   component: RouteComponent,
