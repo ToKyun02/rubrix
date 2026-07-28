@@ -8,6 +8,13 @@ interface GithubInstallationResponse {
   account: { login: string };
 }
 
+interface InstallationAccessTokenResponse {
+  token: string;
+}
+interface InstallationReposResponse {
+  repositories: { full_name: string }[];
+}
+
 @Injectable()
 export class GithubAppService {
   constructor(
@@ -28,7 +35,9 @@ export class GithubAppService {
     );
   }
 
-  async getInstallationAccountLogin(installationId: number): Promise<string> {
+  private async getInstallationAccountLogin(
+    installationId: number,
+  ): Promise<string> {
     const res = await fetch(
       `https://api.github.com/app/installations/${installationId}`,
       {
@@ -40,7 +49,9 @@ export class GithubAppService {
     );
 
     if (!res.ok) {
-      throw new BadRequestException('GitHub App 설치 정보 조회에 실패했습니다.');
+      throw new BadRequestException(
+        'GitHub App 설치 정보 조회에 실패했습니다.',
+      );
     }
 
     const data = (await res.json()) as GithubInstallationResponse;
@@ -72,7 +83,8 @@ export class GithubAppService {
 
     const secret = this.config.getOrThrow<string>('GITHUB_APP_WEBHOOK_SECRET');
     const expected = Buffer.from(
-      'sha256=' + crypto.createHmac('sha256', secret).update(rawBody).digest('hex'),
+      'sha256=' +
+        crypto.createHmac('sha256', secret).update(rawBody).digest('hex'),
     );
     const actual = Buffer.from(signature);
 
@@ -80,5 +92,44 @@ export class GithubAppService {
       expected.length === actual.length &&
       crypto.timingSafeEqual(expected, actual)
     );
+  }
+
+  private async getInstallationAccessToken(installationId: number) {
+    const res = await fetch(
+      `https://api.github.com/app/installations/${installationId}/access_tokens`,
+      {
+        headers: {
+          Authorization: `Bearer ${this.generateAppJwt()}`,
+          Accept: 'application/vnd.github+json',
+        },
+        method: 'POST',
+      },
+    );
+
+    if (!res.ok) {
+      throw new BadRequestException('GitHub token 조회에 실패했습니다.');
+    }
+
+    const data = (await res.json()) as InstallationAccessTokenResponse;
+    return data.token;
+  }
+
+  async listInstallationRepos(installationId: number) {
+    const res = await fetch(
+      `https://api.github.com/installation/repositories`,
+      {
+        headers: {
+          Authorization: `Bearer ${await this.getInstallationAccessToken(installationId)}`,
+          Accept: 'application/vnd.github+json',
+        },
+      },
+    );
+
+    if (!res.ok) {
+      throw new BadRequestException('GitHub Repo 조회에 실패했습니다.');
+    }
+
+    const data = (await res.json()) as InstallationReposResponse;
+    return data.repositories.map((r) => r.full_name);
   }
 }

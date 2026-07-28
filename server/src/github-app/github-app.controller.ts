@@ -1,3 +1,4 @@
+import type { RawBodyRequest } from '@nestjs/common';
 import {
   Controller,
   Get,
@@ -9,7 +10,6 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import type { RawBodyRequest } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { Request, Response } from 'express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -27,13 +27,17 @@ export class GithubAppController {
   async callback(
     @Query('installation_id') installationId: string,
     @Query('setup_action') setupAction: string,
+    @Query('state') state: string,
     @Req() req: Request,
     @Res() res: Response,
   ) {
     const clientUrl = this.config.get('CLIENT_URL');
+    const redirectBase = state
+      ? `${clientUrl}/assignments/${state}`
+      : clientUrl;
 
     if (setupAction !== 'install' && setupAction !== 'update') {
-      return res.redirect(`${clientUrl}?github_app=cancelled`);
+      return res.redirect(`${redirectBase}?github_app=cancelled`);
     }
 
     try {
@@ -42,10 +46,10 @@ export class GithubAppController {
         req.user!.sub,
       );
     } catch {
-      return res.redirect(`${clientUrl}?github_app=error`);
+      return res.redirect(`${redirectBase}?github_app=error`);
     }
 
-    return res.redirect(`${clientUrl}?github_app=connected`);
+    return res.redirect(`${redirectBase}?github_app=connected`);
   }
 
   @Get('status')
@@ -74,11 +78,28 @@ export class GithubAppController {
     if (!isValid) throw new UnauthorizedException();
 
     if (event === 'installation' && req.body.action === 'deleted') {
-      await this.githubAppService.deleteInstallation(
-        req.body.installation.id,
-      );
+      await this.githubAppService.deleteInstallation(req.body.installation.id);
     }
 
     return { received: true };
+  }
+
+  @Get('repos')
+  @UseGuards(JwtAuthGuard)
+  async repos(@Req() req: Request) {
+    if (req.user == null) {
+      throw new UnauthorizedException();
+    }
+    const installation = await this.githubAppService.getInstallationByUserId(
+      req.user.sub,
+    );
+
+    if (!installation) {
+      return [];
+    }
+
+    return this.githubAppService.listInstallationRepos(
+      installation.installationId,
+    );
   }
 }
