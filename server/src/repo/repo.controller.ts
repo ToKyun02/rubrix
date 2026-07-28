@@ -26,6 +26,18 @@ export class RepoController {
     return this.repoService.findByUserAndAssignment(req.user.sub, assignmentId);
   }
 
+  @Get(':assignmentId/pull-requests')
+  listPullRequests(
+    @Param('assignmentId') assignmentId: string,
+    @Req() req: Request,
+  ) {
+    if (req.user == null) {
+      throw new UnauthorizedException();
+    }
+
+    return this.repoService.listPullRequests(req.user.sub, assignmentId);
+  }
+
   @Post()
   connect(@Body() dto: ConnectRepoDto, @Req() req: Request) {
     if (req.user == null) {

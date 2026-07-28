@@ -24,4 +24,14 @@ export class RepoService {
       },
     });
   }
+
+  listPullRequests(userId: string, assignmentId: string) {
+    return this.prisma.repo
+      .findUnique({
+        where: {
+          userId_assignmentId: { userId, assignmentId },
+        },
+      })
+      .pullRequests({ orderBy: { openedAt: 'desc' } });
+  }
 }

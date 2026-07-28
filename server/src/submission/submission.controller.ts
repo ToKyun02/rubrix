@@ -1,0 +1,26 @@
+import {
+  Body,
+  Controller,
+  Post,
+  Req,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
+import type { Request } from 'express';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CreateSubmissionDto } from './dtos/create-submission.dto';
+import { SubmissionService } from './submission.service';
+
+@UseGuards(JwtAuthGuard)
+@Controller('submissions')
+export class SubmissionController {
+  constructor(private readonly submissionService: SubmissionService) {}
+
+  @Post()
+  create(@Body() dto: CreateSubmissionDto, @Req() req: Request) {
+    if (req.user == null) {
+      throw new UnauthorizedException();
+    }
+    return this.submissionService.create(req.user.sub, dto.pullRequestId);
+  }
+}
