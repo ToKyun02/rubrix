@@ -49,6 +49,7 @@ export function Listbox<T extends string>({
   return (
     <div ref={ref} className={cn('relative', className)}>
       <button
+        type="button"
         onClick={() => setOpen((prev) => !prev)}
         className="bg-card border-border text-text flex w-full cursor-pointer items-center justify-between rounded-md border px-3 py-2 text-sm"
       >
@@ -65,6 +66,7 @@ export function Listbox<T extends string>({
           <div className="max-h-60 overflow-y-scroll">
             {options.map((opt) => (
               <button
+                type="button"
                 key={opt.value}
                 onClick={() => {
                   onChange(opt.value);
