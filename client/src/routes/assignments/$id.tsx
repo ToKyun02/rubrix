@@ -1,6 +1,7 @@
 import { Card } from '@/composition-components/Card';
 import { TIER_COLOR_CLASS, TIER_LABEL } from '@/features/assignment/constants';
 import { useAssignment } from '@/features/assignment/hooks/queries';
+import { RepoConnectWidget } from '@/features/repo/components/RepoConnectWidget';
 import { createFileRoute, Link } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/assignments/$id')({
@@ -41,13 +42,14 @@ function RouteComponent() {
           <Card className="flex flex-col gap-2.5 p-4.5 text-[13px]">
             <div className="flex justify-between">
               <span className="text-muted">예상 소요</span>
-              <span>~{assignment.hoursEstimate}h</span>
+              <span className="text-muted">~{assignment.hoursEstimate}h</span>
             </div>
             <div className="flex justify-between gap-3">
               <span className="text-muted flex-none">스택</span>
               <span className="text-right">{assignment.tags.join(' · ')}</span>
             </div>
           </Card>
+          <RepoConnectWidget assignmentId={assignment.id} />
         </aside>
 
         <article className="min-w-0">
@@ -73,7 +75,7 @@ function RouteComponent() {
                 <span className="text-heading w-9 text-[15px] font-bold">
                   {item.points}
                 </span>
-                <span className="flex-1 text-[13.5px] font-bold">
+                <span className="text-muted flex-1 text-[13.5px] font-bold">
                   {item.name}
                 </span>
                 <span className="text-muted-2 text-[11px]">

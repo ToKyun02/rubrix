@@ -41,7 +41,7 @@ export default function GithubAppOnboardingModal({
               className="bg-bg border-subtle flex items-center gap-2.5 rounded-md border px-3.5 py-2.5 text-[13px]"
             >
               <Check className="text-green h-3.5 w-3.5 flex-none" />
-              <span className="font-semibold">{p.scope}</span>
+              <span className="text-heading font-semibold">{p.scope}</span>
               <span className="text-muted ml-auto text-xs">{p.reason}</span>
             </div>
           ))}

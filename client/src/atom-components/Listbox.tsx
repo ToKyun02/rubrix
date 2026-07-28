@@ -12,6 +12,7 @@ interface ListboxProps<T extends string> {
   onChange: (v: T) => void;
   options: ListboxOption<T>[];
   className?: string;
+  placeholder?: string;
 }
 
 export function Listbox<T extends string>({
@@ -19,6 +20,7 @@ export function Listbox<T extends string>({
   onChange,
   options,
   className,
+  placeholder,
 }: ListboxProps<T>) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -47,11 +49,10 @@ export function Listbox<T extends string>({
   return (
     <div ref={ref} className={cn('relative', className)}>
       <button
-        type="button"
         onClick={() => setOpen((prev) => !prev)}
         className="bg-card border-border text-text flex w-full cursor-pointer items-center justify-between rounded-md border px-3 py-2 text-sm"
       >
-        {selected?.label}
+        {selected?.label ?? placeholder}
         <ChevronDown
           className={cn(
             'text-muted h-4 w-4 transition-transform',
@@ -61,22 +62,23 @@ export function Listbox<T extends string>({
       </button>
       {open && (
         <div className="bg-card border-border absolute z-10 mt-1.5 w-full overflow-hidden rounded-md border py-1 shadow-lg">
-          {options.map((opt) => (
-            <button
-              key={opt.value}
-              type="button"
-              onClick={() => {
-                onChange(opt.value);
-                setOpen(false);
-              }}
-              className={cn(
-                'hover:bg-subtle flex w-full cursor-pointer items-center px-3 py-2 text-left text-sm',
-                opt.value === value ? 'text-heading font-bold' : 'text-text',
-              )}
-            >
-              {opt.label}
-            </button>
-          ))}
+          <div className="max-h-60 overflow-y-scroll">
+            {options.map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => {
+                  onChange(opt.value);
+                  setOpen(false);
+                }}
+                className={cn(
+                  'hover:bg-subtle flex w-full cursor-pointer items-center px-3 py-2 text-left text-sm',
+                  opt.value === value ? 'text-heading font-bold' : 'text-text',
+                )}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </div>

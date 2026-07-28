@@ -27,13 +27,17 @@ export class GithubAppController {
   async callback(
     @Query('installation_id') installationId: string,
     @Query('setup_action') setupAction: string,
+    @Query('state') state: string,
     @Req() req: Request,
     @Res() res: Response,
   ) {
     const clientUrl = this.config.get('CLIENT_URL');
+    const redirectBase = state
+      ? `${clientUrl}/assignments/${state}`
+      : clientUrl;
 
     if (setupAction !== 'install' && setupAction !== 'update') {
-      return res.redirect(`${clientUrl}?github_app=cancelled`);
+      return res.redirect(`${redirectBase}?github_app=cancelled`);
     }
 
     try {
@@ -42,10 +46,10 @@ export class GithubAppController {
         req.user!.sub,
       );
     } catch {
-      return res.redirect(`${clientUrl}?github_app=error`);
+      return res.redirect(`${redirectBase}?github_app=error`);
     }
 
-    return res.redirect(`${clientUrl}?github_app=connected`);
+    return res.redirect(`${redirectBase}?github_app=connected`);
   }
 
   @Get('status')
