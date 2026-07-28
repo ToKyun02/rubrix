@@ -13,12 +13,14 @@ import {
 import { ConfigService } from '@nestjs/config';
 import type { Request, Response } from 'express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { PullRequestService } from '../pull-request/pull-request.service';
 import { GithubAppService } from './github-app.service';
 
 @Controller('github-app')
 export class GithubAppController {
   constructor(
     private readonly githubAppService: GithubAppService,
+    private readonly pullRequestService: PullRequestService,
     private readonly config: ConfigService,
   ) {}
 
@@ -79,6 +81,10 @@ export class GithubAppController {
 
     if (event === 'installation' && req.body.action === 'deleted') {
       await this.githubAppService.deleteInstallation(req.body.installation.id);
+    }
+
+    if (event === 'pull_request' && req.body.action === 'opened') {
+      await this.pullRequestService.recordPullRequest(req.body);
     }
 
     return { received: true };
