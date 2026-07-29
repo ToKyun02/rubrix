@@ -31,6 +31,22 @@ export class SubmissionController {
     );
   }
 
+  @Get('stats')
+  stats(@Req() req: Request) {
+    if (req.user == null) {
+      throw new UnauthorizedException();
+    }
+    return this.submissionService.getStats(req.user.sub);
+  }
+
+  @Get('summary')
+  summary(@Req() req: Request) {
+    if (req.user == null) {
+      throw new UnauthorizedException();
+    }
+    return this.submissionService.getSummary(req.user.sub);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string, @Req() req: Request) {
     if (req.user == null) {
