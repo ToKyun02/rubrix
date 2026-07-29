@@ -15,6 +15,14 @@ interface InstallationReposResponse {
   repositories: { full_name: string }[];
 }
 
+interface PullRequestFile {
+  filename: string;
+  status: string;
+  additions: number;
+  deletions: number;
+  patch?: string;
+}
+
 @Injectable()
 export class GithubAppService {
   constructor(
@@ -131,5 +139,35 @@ export class GithubAppService {
 
     const data = (await res.json()) as InstallationReposResponse;
     return data.repositories.map((r) => r.full_name);
+  }
+
+  async getPullRequestDiff(
+    installationId: number,
+    githubFullName: string,
+    number: number,
+  ): Promise<string> {
+    // NOTE : 과제용 PR이 100개를 넘는 경우가 거의 없을 것이라 생각하여 페이지네이션 처리 생략
+    const res = await fetch(
+      `https://api.github.com/repos/${githubFullName}/pulls/${number}/files?per_page=100`,
+      {
+        headers: {
+          Authorization: `Bearer ${await this.getInstallationAccessToken(installationId)}`,
+          Accept: 'application/vnd.github+json',
+        },
+      },
+    );
+
+    if (!res.ok) {
+      throw new BadRequestException('PR 변경 내용 조회에 실패했습니다.');
+    }
+
+    const files = (await res.json()) as PullRequestFile[];
+
+    return files
+      .map(
+        (f) =>
+          `### ${f.filename} (+${f.additions} −${f.deletions})\n${f.patch ?? '(바이너리 파일 또는 변경 내용 없음)'}`,
+      )
+      .join('\n\n');
   }
 }

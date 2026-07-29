@@ -8,5 +8,6 @@ import { GithubAppService } from './github-app.service';
   imports: [AuthModule, PullRequestModule],
   controllers: [GithubAppController],
   providers: [GithubAppService],
+  exports: [GithubAppService],
 })
 export class GithubAppModule {}
