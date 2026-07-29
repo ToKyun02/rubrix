@@ -52,4 +52,35 @@ export class SubmissionService {
 
     return submission;
   }
+
+  async findOne(userId: string, id: string) {
+    const submission = await this.prisma.submission.findUnique({
+      where: { id },
+      include: {
+        assignment: { select: { title: true } },
+        pullRequest: { select: { number: true, branch: true, sha: true } },
+        scores: {
+          include: { rubricItem: { select: { name: true, points: true } } },
+        },
+        comments: true,
+      },
+    });
+
+    if (!submission) {
+      throw new NotFoundException('제출을 찾을 수 없습니다.');
+    }
+    if (submission.userId !== userId) {
+      throw new ForbiddenException('본인의 제출만 볼 수 있습니다.');
+    }
+
+    return submission;
+  }
+
+  findAllByAssignment(userId: string, assignmentId: string) {
+    return this.prisma.submission.findMany({
+      where: { userId, assignmentId },
+      orderBy: { roundNumber: 'desc' },
+      select: { id: true, roundNumber: true, status: true, totalScore: true },
+    });
+  }
 }
