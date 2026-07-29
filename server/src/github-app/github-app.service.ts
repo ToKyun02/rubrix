@@ -23,6 +23,20 @@ interface PullRequestFile {
   patch?: string;
 }
 
+interface GithubPullRequestSummary {
+  number: number;
+  head: { ref: string; sha: string };
+  created_at: string;
+}
+
+interface GithubPullRequestDetail {
+  number: number;
+  head: { ref: string; sha: string };
+  additions: number;
+  deletions: number;
+  created_at: string;
+}
+
 @Injectable()
 export class GithubAppService {
   constructor(
@@ -169,5 +183,48 @@ export class GithubAppService {
           `### ${f.filename} (+${f.additions} −${f.deletions})\n${f.patch ?? '(바이너리 파일 또는 변경 내용 없음)'}`,
       )
       .join('\n\n');
+  }
+
+  async listOpenPullRequests(
+    installationId: number,
+    githubFullName: string,
+  ): Promise<GithubPullRequestSummary[]> {
+    const res = await fetch(
+      `https://api.github.com/repos/${githubFullName}/pulls?state=open&per_page=100`,
+      {
+        headers: {
+          Authorization: `Bearer ${await this.getInstallationAccessToken(installationId)}`,
+          Accept: 'application/vnd.github+json',
+        },
+      },
+    );
+
+    if (!res.ok) {
+      throw new BadRequestException('PR 목록 조회에 실패했습니다.');
+    }
+
+    return res.json();
+  }
+
+  async getPullRequestDetails(
+    installationId: number,
+    githubFullName: string,
+    number: number,
+  ): Promise<GithubPullRequestDetail> {
+    const res = await fetch(
+      `https://api.github.com/repos/${githubFullName}/pulls/${number}`,
+      {
+        headers: {
+          Authorization: `Bearer ${await this.getInstallationAccessToken(installationId)}`,
+          Accept: 'application/vnd.github+json',
+        },
+      },
+    );
+
+    if (!res.ok) {
+      throw new BadRequestException('PR 상세 조회에 실패했습니다.');
+    }
+
+    return res.json();
   }
 }

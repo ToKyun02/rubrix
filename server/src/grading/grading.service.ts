@@ -14,12 +14,11 @@ export class GradingService {
   ) {}
 
   async grade(submissionId: string) {
-    await this.prisma.submission.update({
-      where: { id: submissionId },
-      data: { status: 'GRADING' },
-    });
-
     try {
+      await this.prisma.submission.update({
+        where: { id: submissionId },
+        data: { status: 'GRADING' },
+      });
       const submission = await this.prisma.submission.findUniqueOrThrow({
         where: { id: submissionId },
         include: {
@@ -73,10 +72,12 @@ export class GradingService {
       ]);
     } catch (error) {
       this.logger.error(`채점 실패 (submissionId=${submissionId})`, error);
-      await this.prisma.submission.update({
-        where: { id: submissionId },
-        data: { status: 'FAILED' },
-      });
+      await this.prisma.submission
+        .update({
+          where: { id: submissionId },
+          data: { status: 'FAILED' },
+        })
+        .catch(() => {});
     }
   }
 }
