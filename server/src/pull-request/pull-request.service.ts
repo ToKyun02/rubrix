@@ -17,32 +17,36 @@ export class PullRequestService {
   constructor(private readonly prisma: PrismaService) {}
 
   async recordPullRequest(payload: PullRequestWebhookPayload) {
-    const repo = await this.prisma.repo.findFirst({
+    const repos = await this.prisma.repo.findMany({
       where: { githubFullName: payload.repository.full_name },
     });
 
-    if (!repo) return;
+    if (repos.length === 0) return;
 
     const { pull_request: pr } = payload;
 
-    await this.prisma.pullRequest.upsert({
-      where: { repoId_number: { repoId: repo.id, number: pr.number } },
-      update: {
-        branch: pr.head.ref,
-        sha: pr.head.sha,
-        additions: pr.additions,
-        deletions: pr.deletions,
-      },
-      create: {
-        repoId: repo.id,
-        number: pr.number,
-        branch: pr.head.ref,
-        sha: pr.head.sha,
-        additions: pr.additions,
-        deletions: pr.deletions,
-        openedAt: pr.created_at,
-      },
-    });
+    await Promise.all(
+      repos.map((repo) =>
+        this.prisma.pullRequest.upsert({
+          where: { repoId_number: { repoId: repo.id, number: pr.number } },
+          update: {
+            branch: pr.head.ref,
+            sha: pr.head.sha,
+            additions: pr.additions,
+            deletions: pr.deletions,
+          },
+          create: {
+            repoId: repo.id,
+            number: pr.number,
+            branch: pr.head.ref,
+            sha: pr.head.sha,
+            additions: pr.additions,
+            deletions: pr.deletions,
+            openedAt: pr.created_at,
+          },
+        }),
+      ),
+    );
   }
 
   async backfillPullRequests(
