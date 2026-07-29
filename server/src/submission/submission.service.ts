@@ -83,4 +83,63 @@ export class SubmissionService {
       select: { id: true, roundNumber: true, status: true, totalScore: true },
     });
   }
+
+  async getStats(userId: string) {
+    const graded = await this.prisma.submission.findMany({
+      where: { userId, status: 'GRADED' },
+      select: { assignmentId: true, totalScore: true },
+    });
+
+    const completedAssignments = new Set(graded.map((g) => g.assignmentId))
+      .size;
+    const averageScore = graded.length
+      ? Math.round(
+          graded.reduce((sum, g) => sum + (g.totalScore ?? 0), 0) /
+            graded.length,
+        )
+      : null;
+
+    return { completedAssignments, averageScore };
+  }
+
+  async getSummary(userId: string) {
+    const submissions = await this.prisma.submission.findMany({
+      where: { userId },
+      include: { assignment: { select: { title: true } } },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    const byAssignment = new Map<
+      string,
+      {
+        assignmentId: string;
+        assignmentTitle: string;
+        bestScore: number | null;
+        latestStatus: (typeof submissions)[number]['status'];
+        lastActivityAt: Date;
+        latestSubmissionId: string;
+      }
+    >();
+
+    for (const s of submissions) {
+      const row = byAssignment.get(s.assignmentId);
+      if (!row) {
+        byAssignment.set(s.assignmentId, {
+          assignmentId: s.assignmentId,
+          assignmentTitle: s.assignment.title,
+          bestScore: s.totalScore,
+          latestStatus: s.status,
+          lastActivityAt: s.createdAt,
+          latestSubmissionId: s.id,
+        });
+      } else if (
+        s.totalScore != null &&
+        (row.bestScore == null || s.totalScore > row.bestScore)
+      ) {
+        row.bestScore = s.totalScore;
+      }
+    }
+
+    return [...byAssignment.values()];
+  }
 }

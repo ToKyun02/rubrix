@@ -1,6 +1,6 @@
 import { useLogout } from '@/features/auth/hooks/queries';
 import type { User } from '@/features/auth/hooks/types';
-import { useNavigate } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { useEffect, useRef, useState } from 'react';
 
 interface ProfileProps {
@@ -65,6 +65,13 @@ export function Profile({ user }: ProfileProps) {
           <div className="border-subtle text-heading border-b px-3.5 py-2.5 text-[13px] font-bold">
             {user.username}
           </div>
+          <Link
+            to="/mypage"
+            onClick={() => setOpen(false)}
+            className="text-text hover:bg-subtle block px-3.5 py-2 text-[13px] font-semibold"
+          >
+            마이페이지
+          </Link>
           <button
             type="button"
             onClick={handleLogout}
