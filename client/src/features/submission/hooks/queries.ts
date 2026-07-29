@@ -5,7 +5,12 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { HTTPError } from 'ky';
 import { z } from 'zod';
-import { SubmissionDetailSchema, SubmissionSummarySchema } from './types';
+import {
+  SubmissionDetailSchema,
+  SubmissionStatsSchema,
+  SubmissionSummaryRowSchema,
+  SubmissionSummarySchema,
+} from './types';
 
 export const submissionKeys = {
   detail: (id: string) => ['submissions', id] as const,
@@ -64,5 +69,25 @@ export function useSubmissionList(assignmentId: string, enabled: boolean) {
       return z.array(SubmissionSummarySchema).parse(data);
     },
     enabled,
+  });
+}
+
+export function useSubmissionStats() {
+  return useQuery({
+    queryKey: ['submissions', 'stats'],
+    queryFn: async () => {
+      const data = await api.get('submissions/stats').json();
+      return SubmissionStatsSchema.parse(data);
+    },
+  });
+}
+
+export function useSubmissionSummary() {
+  return useQuery({
+    queryKey: ['submissions', 'summary'],
+    queryFn: async () => {
+      const data = await api.get('submissions/summary').json();
+      return z.array(SubmissionSummaryRowSchema).parse(data);
+    },
   });
 }
