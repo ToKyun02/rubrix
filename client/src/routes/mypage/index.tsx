@@ -1,4 +1,5 @@
 import { Card } from '@/composition-components/Card';
+import { TIER_COLOR_CLASS, TIER_LABEL } from '@/features/assignment/constants';
 import { meQueryOptions, useMe } from '@/features/auth/hooks/queries';
 import {
   SUBMISSION_STATUS_COLOR,
@@ -8,6 +9,7 @@ import {
   useSubmissionStats,
   useSubmissionSummary,
 } from '@/features/submission/hooks/queries';
+import { cn } from '@/utils/cn';
 import { createFileRoute, Link, redirect } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/mypage/')({
@@ -46,24 +48,32 @@ function RouteComponent() {
           )}
         </div>
         <div className="min-w-55 flex-1">
-          <div className="text-heading text-lg font-extrabold">
-            {me.username}
+          <div className="flex items-center gap-2">
+            <span className="text-heading text-lg font-extrabold">
+              {me.username}
+            </span>
+            {stats && (
+              <span
+                className={cn(
+                  'rounded px-2 py-0.5 text-[10.5px] font-extrabold',
+                  stats.tier
+                    ? TIER_COLOR_CLASS[stats.tier]
+                    : 'bg-subtle text-muted',
+                )}
+              >
+                {stats.tier ? TIER_LABEL[stats.tier] : '등급 없음'}
+              </span>
+            )}
           </div>
           <div className="text-muted text-xs">@{me.username}</div>
-        </div>
-        <div className="flex gap-7">
-          <div className="text-center">
-            <div className="text-heading font-mono text-xl font-extrabold">
-              {stats?.completedAssignments ?? '-'}
+          {stats?.nextTier && (
+            <div className="text-muted mt-1 text-[11px]">
+              <span className={`font-bold ${TIER_COLOR_CLASS[stats.nextTier]}`}>
+                {TIER_LABEL[stats.nextTier]}
+              </span>{' '}
+              난이도 과제를 {85}점 이상으로 통과하면 승급해요
             </div>
-            <div className="text-muted text-[11px]">완료 과제</div>
-          </div>
-          <div className="text-center">
-            <div className="text-heading font-mono text-xl font-extrabold">
-              {stats?.averageScore ?? '-'}
-            </div>
-            <div className="text-muted text-[11px]">평균 점수</div>
-          </div>
+          )}
         </div>
       </Card>
 

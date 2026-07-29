@@ -4,8 +4,12 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { Tier } from '../generated/prisma/client';
 import { GradingService } from '../grading/grading.service';
 import { PrismaService } from '../prisma/prisma.service';
+
+const TIER_ORDER: Tier[] = ['BRONZE', 'SILVER', 'GOLD', 'PLATINUM', 'DIAMOND'];
+const PASSING_SCORE = 85;
 
 @Injectable()
 export class SubmissionService {
@@ -87,7 +91,11 @@ export class SubmissionService {
   async getStats(userId: string) {
     const graded = await this.prisma.submission.findMany({
       where: { userId, status: 'GRADED' },
-      select: { assignmentId: true, totalScore: true },
+      select: {
+        assignmentId: true,
+        totalScore: true,
+        assignment: { select: { tier: true } },
+      },
     });
 
     const completedAssignments = new Set(graded.map((g) => g.assignmentId))
@@ -99,7 +107,18 @@ export class SubmissionService {
         )
       : null;
 
-    return { completedAssignments, averageScore };
+    const clearedTierIndexes = graded
+      .filter((g) => (g.totalScore ?? 0) >= PASSING_SCORE)
+      .map((g) => TIER_ORDER.indexOf(g.assignment.tier));
+
+    const tierIndex = clearedTierIndexes.length
+      ? Math.max(...clearedTierIndexes)
+      : -1;
+    const tier = tierIndex >= 0 ? TIER_ORDER[tierIndex] : null;
+    const nextTier =
+      tierIndex < TIER_ORDER.length - 1 ? TIER_ORDER[tierIndex + 1] : null;
+
+    return { completedAssignments, averageScore, tier, nextTier };
   }
 
   async getSummary(userId: string) {

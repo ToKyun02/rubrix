@@ -1,3 +1,4 @@
+import { TierSchema } from '@/features/assignment/hooks/types';
 import { z } from 'zod';
 
 export const SubmissionStatusSchema = z.enum([
@@ -55,8 +56,9 @@ export const SubmissionSummarySchema = z.object({
 export const SubmissionStatsSchema = z.object({
   completedAssignments: z.number(),
   averageScore: z.number().nullable(),
+  tier: TierSchema.nullable(),
+  nextTier: TierSchema.nullable(),
 });
-
 export const SubmissionSummaryRowSchema = z.object({
   assignmentId: z.string(),
   assignmentTitle: z.string(),
