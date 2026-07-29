@@ -1,14 +1,28 @@
 import { repoKeys } from '@/features/repo/hooks/queries';
 import { api } from '@/utils/networkHelper';
 import { showToast } from '@/utils/toast';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import { HTTPError } from 'ky';
+import { z } from 'zod';
+import { SubmissionDetailSchema, SubmissionSummarySchema } from './types';
+
+export const submissionKeys = {
+  detail: (id: string) => ['submissions', id] as const,
+  list: (assignmentId: string) =>
+    ['submissions', 'list', assignmentId] as const,
+};
 
 export function useCreateSubmission(assignmentId: string) {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   return useMutation({
-    mutationFn: (pullRequestId: string) =>
-      api.post('submissions', { json: { pullRequestId } }).json(),
+    mutationFn: async (pullRequestId: string) => {
+      const data = await api
+        .post('submissions', { json: { pullRequestId } })
+        .json();
+      return SubmissionSummarySchema.pick({ id: true }).parse(data);
+    },
     onError: (error) => {
       if (error instanceof HTTPError && error.response.status === 409) {
         showToast('이미 제출한 PR이에요', 'error');
@@ -16,11 +30,39 @@ export function useCreateSubmission(assignmentId: string) {
       }
       showToast('제출에 실패했습니다', 'error');
     },
-    onSuccess: () => {
+    onSuccess: (submission) => {
       showToast('제출됐어요', 'success');
       queryClient.invalidateQueries({
         queryKey: repoKeys.pullRequests(assignmentId),
       });
+      navigate({ to: '/submissions/$id', params: { id: submission.id } });
     },
+  });
+}
+
+export function useSubmission(id: string) {
+  return useQuery({
+    queryKey: submissionKeys.detail(id),
+    queryFn: async () => {
+      const data = await api.get(`submissions/${id}`).json();
+      return SubmissionDetailSchema.parse(data);
+    },
+    refetchInterval: (query) => {
+      const status = query.state.data?.status;
+      return status === 'PENDING' || status === 'GRADING' ? 2000 : false;
+    },
+  });
+}
+
+export function useSubmissionList(assignmentId: string, enabled: boolean) {
+  return useQuery({
+    queryKey: submissionKeys.list(assignmentId),
+    queryFn: async () => {
+      const data = await api
+        .get('submissions', { searchParams: { assignmentId } })
+        .json();
+      return z.array(SubmissionSummarySchema).parse(data);
+    },
+    enabled,
   });
 }

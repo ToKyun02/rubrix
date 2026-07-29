@@ -17,6 +17,7 @@ import { Route as AssignmentsIndexRouteImport } from './routes/assignments/index
 import { Route as AssignmentsIdRouteImport } from './routes/assignments/$id'
 import { Route as LoginIndexRouteImport } from './routes/login/index'
 import { Route as SubmissionsIndexRouteImport } from './routes/submissions/index'
+import { Route as SubmissionsIdRouteImport } from './routes/submissions/$id'
 import { Route as AdminAssignmentsIndexRouteImport } from './routes/admin/assignments/index'
 import { Route as AdminAssignmentsIdRouteImport } from './routes/admin/assignments/$id'
 import { Route as AdminAssignmentsNewRouteImport } from './routes/admin/assignments/new'
@@ -61,6 +62,11 @@ const SubmissionsIndexRoute = SubmissionsIndexRouteImport.update({
   path: '/submissions/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SubmissionsIdRoute = SubmissionsIdRouteImport.update({
+  id: '/submissions/$id',
+  path: '/submissions/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminAssignmentsIndexRoute = AdminAssignmentsIndexRouteImport.update({
   id: '/assignments/',
   path: '/assignments/',
@@ -82,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteRouteWithChildren
   '/assignments': typeof AssignmentsRouteRouteWithChildren
   '/assignments/$id': typeof AssignmentsIdRoute
+  '/submissions/$id': typeof SubmissionsIdRoute
   '/admin/': typeof AdminIndexRoute
   '/assignments/': typeof AssignmentsIndexRoute
   '/login/': typeof LoginIndexRoute
@@ -93,6 +100,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/assignments/$id': typeof AssignmentsIdRoute
+  '/submissions/$id': typeof SubmissionsIdRoute
   '/admin': typeof AdminIndexRoute
   '/assignments': typeof AssignmentsIndexRoute
   '/login': typeof LoginIndexRoute
@@ -107,6 +115,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteRouteWithChildren
   '/assignments': typeof AssignmentsRouteRouteWithChildren
   '/assignments/$id': typeof AssignmentsIdRoute
+  '/submissions/$id': typeof SubmissionsIdRoute
   '/admin/': typeof AdminIndexRoute
   '/assignments/': typeof AssignmentsIndexRoute
   '/login/': typeof LoginIndexRoute
@@ -122,6 +131,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/assignments'
     | '/assignments/$id'
+    | '/submissions/$id'
     | '/admin/'
     | '/assignments/'
     | '/login/'
@@ -133,6 +143,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/assignments/$id'
+    | '/submissions/$id'
     | '/admin'
     | '/assignments'
     | '/login'
@@ -146,6 +157,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/assignments'
     | '/assignments/$id'
+    | '/submissions/$id'
     | '/admin/'
     | '/assignments/'
     | '/login/'
@@ -159,6 +171,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
   AssignmentsRouteRoute: typeof AssignmentsRouteRouteWithChildren
+  SubmissionsIdRoute: typeof SubmissionsIdRoute
   LoginIndexRoute: typeof LoginIndexRoute
   SubmissionsIndexRoute: typeof SubmissionsIndexRoute
 }
@@ -221,6 +234,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SubmissionsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/submissions/$id': {
+      id: '/submissions/$id'
+      path: '/submissions/$id'
+      fullPath: '/submissions/$id'
+      preLoaderRoute: typeof SubmissionsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/assignments/': {
       id: '/admin/assignments/'
       path: '/assignments'
@@ -280,6 +300,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRouteRoute: AdminRouteRouteWithChildren,
   AssignmentsRouteRoute: AssignmentsRouteRouteWithChildren,
+  SubmissionsIdRoute: SubmissionsIdRoute,
   LoginIndexRoute: LoginIndexRoute,
   SubmissionsIndexRoute: SubmissionsIndexRoute,
 }
