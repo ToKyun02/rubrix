@@ -2,6 +2,7 @@ import { Card } from '@/composition-components/Card';
 import { TIER_COLOR_CLASS, TIER_LABEL } from '@/features/assignment/constants';
 import { useAssignment } from '@/features/assignment/hooks/queries';
 import { RepoConnectWidget } from '@/features/repo/components/RepoConnectWidget';
+import { PullRequestPicker } from '@/features/submission/components/PullRequestPicker';
 import { createFileRoute, Link } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/assignments/$id')({
@@ -50,6 +51,7 @@ function RouteComponent() {
             </div>
           </Card>
           <RepoConnectWidget assignmentId={assignment.id} />
+          <PullRequestPicker assignmentId={assignment.id} />
         </aside>
 
         <article className="min-w-0">

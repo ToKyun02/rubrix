@@ -132,4 +132,6 @@ model Submission {
   status SubmissionStatus @default(PENDING)
   totalScore Int?
   createdAt DateTime @default(now())
+
+  @@unique([userId, pullRequestId])
 }

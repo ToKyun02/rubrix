@@ -1,10 +1,13 @@
 import { api } from '@/utils/networkHelper';
 import { showToast } from '@/utils/toast';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { RepoSchema } from './types';
+import z from 'zod';
+import { PullRequestSchema, RepoSchema } from './types';
 
 export const repoKeys = {
   detail: (assignmentId: string) => ['repos', assignmentId] as const,
+  pullRequests: (assignmentId: string) =>
+    ['repos', assignmentId, 'pull-requests'] as const,
 };
 
 export function useAssignmentRepo(assignmentId: string) {
@@ -33,5 +36,16 @@ export function useConnectRepo() {
         queryKey: repoKeys.detail(assignmentId),
       });
     },
+  });
+}
+
+export function usePullRequests(assignmentId: string, enabled: boolean) {
+  return useQuery({
+    queryKey: repoKeys.pullRequests(assignmentId),
+    queryFn: async () => {
+      const data = await api.get(`repos/${assignmentId}/pull-requests`).json();
+      return z.array(PullRequestSchema).parse(data);
+    },
+    enabled,
   });
 }

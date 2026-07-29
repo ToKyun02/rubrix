@@ -3,6 +3,6 @@ import { PullRequestService } from './pull-request.service';
 
 @Module({
   providers: [PullRequestService],
-  exports: [PullRequestModule],
+  exports: [PullRequestService],
 })
 export class PullRequestModule {}

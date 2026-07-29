@@ -25,13 +25,19 @@ export class RepoService {
     });
   }
 
-  listPullRequests(userId: string, assignmentId: string) {
-    return this.prisma.repo
-      .findUnique({
-        where: {
-          userId_assignmentId: { userId, assignmentId },
-        },
-      })
-      .pullRequests({ orderBy: { openedAt: 'desc' } });
+  async listPullRequests(userId: string, assignmentId: string) {
+    const pullRequests = await this.prisma.repo
+      .findUnique({ where: { userId_assignmentId: { userId, assignmentId } } })
+      .pullRequests({
+        orderBy: { openedAt: 'desc' },
+        include: { submissions: true },
+      });
+
+    if (pullRequests == null) return [];
+
+    return pullRequests.map(({ submissions, ...pr }) => ({
+      ...pr,
+      submitted: submissions.length > 0,
+    }));
   }
 }
