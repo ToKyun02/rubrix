@@ -44,4 +44,21 @@ export class PullRequestService {
       },
     });
   }
+
+  async backfillPullRequests(
+    repoId: string,
+    pullRequests: {
+      number: number;
+      branch: string;
+      sha: string;
+      additions: number;
+      deletions: number;
+      openedAt: string;
+    }[],
+  ) {
+    await this.prisma.pullRequest.createMany({
+      data: pullRequests.map((pr) => ({ repoId, ...pr })),
+      skipDuplicates: true,
+    });
+  }
 }

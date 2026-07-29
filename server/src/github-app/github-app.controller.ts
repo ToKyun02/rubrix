@@ -83,7 +83,10 @@ export class GithubAppController {
       await this.githubAppService.deleteInstallation(req.body.installation.id);
     }
 
-    if (event === 'pull_request' && req.body.action === 'opened') {
+    if (
+      event === 'pull_request' &&
+      (req.body.action === 'opened' || req.body.action === 'reopened')
+    ) {
       await this.pullRequestService.recordPullRequest(req.body);
     }
 

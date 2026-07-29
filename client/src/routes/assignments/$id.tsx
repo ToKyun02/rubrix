@@ -47,7 +47,9 @@ function RouteComponent() {
             </div>
             <div className="flex justify-between gap-3">
               <span className="text-muted flex-none">스택</span>
-              <span className="text-right">{assignment.tags.join(' · ')}</span>
+              <span className="text-muted text-right">
+                {assignment.tags.join(' · ')}
+              </span>
             </div>
           </Card>
           <RepoConnectWidget assignmentId={assignment.id} />

@@ -4,11 +4,15 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { GradingService } from '../grading/grading.service';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class SubmissionService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly gradingService: GradingService,
+  ) {}
 
   async create(userId: string, pullRequestId: string) {
     const pullRequest = await this.prisma.pullRequest.findUnique({
@@ -35,7 +39,7 @@ export class SubmissionService {
         where: { userId, assignmentId: pullRequest.repo.assignmentId },
       })) + 1;
 
-    return this.prisma.submission.create({
+    const submission = await this.prisma.submission.create({
       data: {
         userId,
         assignmentId: pullRequest.repo.assignmentId,
@@ -43,5 +47,9 @@ export class SubmissionService {
         roundNumber,
       },
     });
+
+    void this.gradingService.grade(submission.id);
+
+    return submission;
   }
 }
