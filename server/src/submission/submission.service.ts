@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -20,6 +21,13 @@ export class SubmissionService {
     }
     if (pullRequest.repo.userId !== userId) {
       throw new ForbiddenException('본인의 PR만 제출할 수 있습니다.');
+    }
+
+    const existing = await this.prisma.submission.findUnique({
+      where: { userId_pullRequestId: { userId, pullRequestId } },
+    });
+    if (existing) {
+      throw new ConflictException('이미 제출한 PR입니다.');
     }
 
     const roundNumber =
