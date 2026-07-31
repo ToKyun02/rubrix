@@ -29,6 +29,10 @@ flowchart LR
   API <--> LLM["Claude API\ntool-use 강제 채점"]
 ```
 
+## 인프라 아키텍처
+
+<img width="1740" height="1370" alt="Image" src="https://github.com/user-attachments/assets/555bb6c6-97fb-4b37-bd02-9293102f2d69" />
+
 ## 기술 스택
 
 | 영역     | 스택                                                                  |
