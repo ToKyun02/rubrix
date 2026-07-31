@@ -34,6 +34,13 @@ jobs:
           cache-dependency-path: client/pnpm-lock.yaml
 
       - run: pnpm install --frozen-lockfile
+
+      - name: Create to .env file
+        run: |
+          echo "VITE_GITHUB_CLIENT_ID=${{ secrets.VITE_GITHUB_CLIENT_ID }}" >> .env
+          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" >> .env
+          echo "VITE_GITHUB_APP_SLUG=${{ secrets.VITE_GITHUB_APP_SLUG }}" >> .env
+
       - run: pnpm build
 
       - uses: aws-actions/configure-aws-credentials@v4
