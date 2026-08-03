@@ -3,9 +3,10 @@ import { TIER_COLOR_CLASS, TIER_LABEL } from '@/features/assignment/constants';
 import { useAssignment } from '@/features/assignment/hooks/queries';
 import { RepoConnectWidget } from '@/features/repo/components/RepoConnectWidget';
 import { PullRequestPicker } from '@/features/submission/components/PullRequestPicker';
+import { downloadTextFile } from '@/utils/download';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import MarkdownPreview from '@uiw/react-markdown-preview';
-import { StarCheck } from 'lucide-react';
+import { Download, StarCheck } from 'lucide-react';
 
 export const Route = createFileRoute('/assignments/$id')({
   component: RouteComponent,
@@ -60,7 +61,19 @@ function RouteComponent() {
 
         <article className="min-w-0">
           <h2 className="text-heading mb-3.5 flex items-center gap-2 text-lg font-extrabold">
-            <StarCheck color="yellow" /> 요구사항서
+            <StarCheck color="yellow" />
+            <span className="flex-1">요구사항서</span>
+            <button
+              onClick={() =>
+                downloadTextFile(
+                  `${assignment.title}.md`,
+                  assignment.requirementsMd,
+                )
+              }
+              className="cursor-pointer"
+            >
+              <Download />
+            </button>
           </h2>
           <div
             data-color-mode={localStorage.getItem('theme') || 'light'}
