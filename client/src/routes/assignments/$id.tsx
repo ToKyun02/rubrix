@@ -4,6 +4,8 @@ import { useAssignment } from '@/features/assignment/hooks/queries';
 import { RepoConnectWidget } from '@/features/repo/components/RepoConnectWidget';
 import { PullRequestPicker } from '@/features/submission/components/PullRequestPicker';
 import { createFileRoute, Link } from '@tanstack/react-router';
+import MarkdownPreview from '@uiw/react-markdown-preview';
+import { StarCheck } from 'lucide-react';
 
 export const Route = createFileRoute('/assignments/$id')({
   component: RouteComponent,
@@ -57,12 +59,15 @@ function RouteComponent() {
         </aside>
 
         <article className="min-w-0">
-          <h2 className="text-heading mb-3.5 text-lg font-extrabold">
-            요구사항
+          <h2 className="text-heading mb-3.5 flex items-center gap-2 text-lg font-extrabold">
+            <StarCheck color="yellow" /> 요구사항서
           </h2>
-          <p className="text-text mb-8 text-[14.5px] leading-relaxed whitespace-pre-wrap">
-            {assignment.requirementsMd}
-          </p>
+          <div
+            data-color-mode={localStorage.getItem('theme') || 'light'}
+            className="py-4"
+          >
+            <MarkdownPreview source={assignment.requirementsMd} />
+          </div>
 
           <h2 className="text-heading mb-1.5 text-lg font-extrabold">
             평가 기준
