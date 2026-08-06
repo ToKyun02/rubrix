@@ -3,7 +3,11 @@ import { TIER_COLOR_CLASS, TIER_LABEL } from '@/features/assignment/constants';
 import { useAssignment } from '@/features/assignment/hooks/queries';
 import { RepoConnectWidget } from '@/features/repo/components/RepoConnectWidget';
 import { PullRequestPicker } from '@/features/submission/components/PullRequestPicker';
+import { useTheme } from '@/features/theme/providers/ThemeProvider';
+import { downloadTextFile } from '@/utils/download';
 import { createFileRoute, Link } from '@tanstack/react-router';
+import MarkdownPreview from '@uiw/react-markdown-preview';
+import { Download, StarCheck } from 'lucide-react';
 
 export const Route = createFileRoute('/assignments/$id')({
   component: RouteComponent,
@@ -12,6 +16,7 @@ export const Route = createFileRoute('/assignments/$id')({
 function RouteComponent() {
   const { id } = Route.useParams();
   const { data: assignment, isPending, isError } = useAssignment(id);
+  const { isDark } = useTheme();
 
   if (isPending) return <div className="text-muted text-sm">로딩 중...</div>;
   if (isError) return <div className="text-red text-sm">불러오기 실패</div>;
@@ -57,12 +62,27 @@ function RouteComponent() {
         </aside>
 
         <article className="min-w-0">
-          <h2 className="text-heading mb-3.5 text-lg font-extrabold">
-            요구사항
+          <h2 className="text-heading mb-3.5 flex items-center gap-2 text-lg font-extrabold">
+            <StarCheck color="yellow" />
+            <span className="flex-1">요구사항서</span>
+            <button
+              onClick={() =>
+                downloadTextFile(
+                  `${assignment.title}.md`,
+                  assignment.requirementsMd,
+                )
+              }
+              className="cursor-pointer"
+            >
+              <Download />
+            </button>
           </h2>
-          <p className="text-text mb-8 text-[14.5px] leading-relaxed whitespace-pre-wrap">
-            {assignment.requirementsMd}
-          </p>
+          <div
+            data-color-mode={isDark ? 'dark' : 'light'}
+            className="border-subtle rounded-2xl border px-2 py-4"
+          >
+            <MarkdownPreview source={assignment.requirementsMd} />
+          </div>
 
           <h2 className="text-heading mb-1.5 text-lg font-extrabold">
             평가 기준

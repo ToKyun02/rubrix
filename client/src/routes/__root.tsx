@@ -3,6 +3,8 @@ import LogoText from '@/atom-components/LogoText';
 import { Profile } from '@/features/auth/components/Profile';
 import { useMe } from '@/features/auth/hooks/queries';
 import ThemeToggleButton from '@/features/theme/components/ThemeToggleButton';
+import { ThemeProvider } from '@/features/theme/providers/ThemeProvider';
+
 import type { QueryClient } from '@tanstack/react-query';
 import {
   createRootRouteWithContext,
@@ -14,11 +16,11 @@ import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 
 export default function RootLayout() {
   return (
-    <>
+    <ThemeProvider>
       <Header />
       <Outlet />
       <TanStackRouterDevtools />
-    </>
+    </ThemeProvider>
   );
 }
 
