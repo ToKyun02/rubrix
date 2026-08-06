@@ -3,6 +3,7 @@ import { TIER_COLOR_CLASS, TIER_LABEL } from '@/features/assignment/constants';
 import { useAssignment } from '@/features/assignment/hooks/queries';
 import { RepoConnectWidget } from '@/features/repo/components/RepoConnectWidget';
 import { PullRequestPicker } from '@/features/submission/components/PullRequestPicker';
+import { useTheme } from '@/features/theme/providers/ThemeProvider';
 import { downloadTextFile } from '@/utils/download';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import MarkdownPreview from '@uiw/react-markdown-preview';
@@ -15,6 +16,7 @@ export const Route = createFileRoute('/assignments/$id')({
 function RouteComponent() {
   const { id } = Route.useParams();
   const { data: assignment, isPending, isError } = useAssignment(id);
+  const { isDark } = useTheme();
 
   if (isPending) return <div className="text-muted text-sm">로딩 중...</div>;
   if (isError) return <div className="text-red text-sm">불러오기 실패</div>;
@@ -76,8 +78,8 @@ function RouteComponent() {
             </button>
           </h2>
           <div
-            data-color-mode={localStorage.getItem('theme') || 'light'}
-            className="py-4"
+            data-color-mode={isDark ? 'dark' : 'light'}
+            className="border-subtle rounded-2xl border px-2 py-4"
           >
             <MarkdownPreview source={assignment.requirementsMd} />
           </div>

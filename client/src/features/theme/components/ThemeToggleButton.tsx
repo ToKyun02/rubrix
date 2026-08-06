@@ -1,11 +1,9 @@
 import { Button } from '@/atom-components/Button';
 import { Moon, Sun } from 'lucide-react';
-import { useState } from 'react';
+import { useTheme } from '../providers/ThemeProvider';
 
 export default function ThemeToggleButton() {
-  const [isDark, setIsDark] = useState(() =>
-    document.documentElement.classList.contains('dark'),
-  );
+  const { isDark, setIsDark } = useTheme();
 
   const handleClick = () => {
     const next = !isDark;
