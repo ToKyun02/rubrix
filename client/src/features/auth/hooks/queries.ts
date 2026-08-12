@@ -26,7 +26,9 @@ export function useLogout() {
       window.location.href = window.location.origin + '/login';
     },
     onError: () => {
-      showToast('네트워크 오류로 인해 로그아웃에 실패했습니다.', 'error');
+      showToast('네트워크 오류로 인해 로그아웃에 실패했습니다.', {
+        variant: 'error',
+      });
     },
   });
 }

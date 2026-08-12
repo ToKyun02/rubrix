@@ -30,13 +30,13 @@ export function useCreateSubmission(assignmentId: string) {
     },
     onError: (error) => {
       if (error instanceof HTTPError && error.response.status === 409) {
-        showToast('이미 제출한 PR이에요', 'error');
+        showToast('이미 제출한 PR이에요', { variant: 'error' });
         return;
       }
-      showToast('제출에 실패했습니다', 'error');
+      showToast('제출에 실패했습니다', { variant: 'error' });
     },
     onSuccess: (submission) => {
-      showToast('제출됐어요', 'success');
+      showToast('제출됐어요');
       queryClient.invalidateQueries({
         queryKey: repoKeys.pullRequests(assignmentId),
       });

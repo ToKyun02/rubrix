@@ -20,7 +20,8 @@ export const adminAssignmentKeys = {
     [...adminAssignmentKeys.lists(), params] as const,
 };
 
-const onMutationError = () => showToast('요청에 실패했습니다', 'error');
+const onMutationError = () =>
+  showToast('요청에 실패했습니다', { variant: 'error' });
 
 export function useAdminAssignments({
   page = 1,

@@ -30,7 +30,7 @@ export function useConnectRepo() {
       assignmentId: string;
       githubFullName: string;
     }) => api.post('repos', { json: { assignmentId, githubFullName } }).json(),
-    onError: () => showToast('레포 연결에 실패했습니다', 'error'),
+    onError: () => showToast('레포 연결에 실패했습니다', { variant: 'error' }),
     onSuccess: (_data, { assignmentId }) => {
       queryClient.invalidateQueries({
         queryKey: repoKeys.detail(assignmentId),
