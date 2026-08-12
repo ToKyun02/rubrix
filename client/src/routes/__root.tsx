@@ -33,7 +33,7 @@ function Header() {
   if (isLoginPage || isAdminPage) return null;
 
   return (
-    <header className="text-heading bg-bg sticky top-0 right-0 left-0 z-10 flex items-center px-10 pt-2">
+    <header className="text-heading bg-bg sticky top-0 right-0 left-0 z-10 flex items-center px-10 py-2">
       <RouterLink to="/" className="flex-1">
         <LogoText />
       </RouterLink>
