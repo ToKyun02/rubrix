@@ -1,4 +1,5 @@
 import Link from '@/atom-components/Link';
+import { useMe } from '@/features/auth/hooks/queries';
 import {
   usePipelineDemo,
   type DemoState,
@@ -9,6 +10,8 @@ import { useEffect, useRef } from 'react';
 import Container from './-Container';
 
 export default function Hero() {
+  const { data: me } = useMe();
+
   return (
     <section>
       <Container
@@ -26,12 +29,15 @@ export default function Hero() {
             리뷰어가 라인 단위로 짚어줍니다.
           </p>
           <div className="flex flex-col gap-2 md:flex-row">
-            <Link to="/login" variant="primary" size="lg">
-              Github로 시작하기
-            </Link>
-            <Link to="/submissions" size="lg">
-              과제 둘러보기
-            </Link>
+            {me?.id ? (
+              <Link to="/assignments" variant="primary" size="lg">
+                과제 둘러보기
+              </Link>
+            ) : (
+              <Link to="/login" variant="primary" size="lg">
+                Github로 시작하기
+              </Link>
+            )}
           </div>
         </div>
 

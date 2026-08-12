@@ -1,10 +1,6 @@
 import { api } from '@/utils/networkHelper';
-import {
-  queryOptions,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { showToast } from '@/utils/toast';
+import { queryOptions, useMutation, useQuery } from '@tanstack/react-query';
 import { UserSchema } from './types';
 
 export const meQueryOptions = queryOptions({
@@ -24,11 +20,13 @@ export function useMe() {
 }
 
 export function useLogout() {
-  const queryCleint = useQueryClient();
   return useMutation({
     mutationFn: () => api.post('auth/logout'),
     onSuccess: () => {
-      queryCleint.removeQueries({ queryKey: meQueryOptions.queryKey });
+      window.location.href = window.location.origin + '/login';
+    },
+    onError: () => {
+      showToast('네트워크 오류로 인해 로그아웃에 실패했습니다.', 'error');
     },
   });
 }
