@@ -59,15 +59,16 @@ docker compose up --build
 
 `server/.env`
 
-| 변수                                                                  | 설명                                  |
-| --------------------------------------------------------------------- | ------------------------------------- |
-| `DATABASE_URL`                                                        | PostgreSQL 연결 문자열                |
-| `JWT_SECRET`                                                          | 액세스 토큰 서명 키                   |
-| `CLIENT_URL`                                                          | 프론트엔드 오리진 (콜백 리다이렉트용) |
-| `GITHUB_APP_ID` / `GITHUB_APP_CLIENT_ID` / `GITHUB_APP_CLIENT_SECRET` | GitHub App 자격 증명                  |
-| `GITHUB_APP_PRIVATE_KEY`                                              | GitHub App RS256 서명 키              |
-| `GITHUB_APP_WEBHOOK_SECRET`                                           | 웹훅 HMAC-SHA256 서명 검증용          |
-| `ANTHROPIC_API_KEY`                                                   | Claude API 키                         |
+| 변수                                                                  | 설명                                            |
+| --------------------------------------------------------------------- | ----------------------------------------------- |
+| `NODE_ENV`                                                            | 개발 환경=development, 프로덕션 환경=production |
+| `DATABASE_URL`                                                        | PostgreSQL 연결 문자열                          |
+| `JWT_SECRET`                                                          | 액세스 토큰 서명 키                             |
+| `CLIENT_URL`                                                          | 프론트엔드 오리진 (콜백 리다이렉트용)           |
+| `GITHUB_APP_ID` / `GITHUB_APP_CLIENT_ID` / `GITHUB_APP_CLIENT_SECRET` | GitHub App 자격 증명                            |
+| `GITHUB_APP_PRIVATE_KEY`                                              | GitHub App RS256 서명 키                        |
+| `GITHUB_APP_WEBHOOK_SECRET`                                           | 웹훅 HMAC-SHA256 서명 검증용                    |
+| `ANTHROPIC_API_KEY`                                                   | Claude API 키                                   |
 
 `client/.env`
 
