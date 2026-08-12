@@ -1,4 +1,5 @@
 import { api } from '@/utils/networkHelper';
+import { showToast } from '@/utils/toast';
 import {
   queryOptions,
   useMutation,
@@ -24,11 +25,14 @@ export function useMe() {
 }
 
 export function useLogout() {
-  const queryCleint = useQueryClient();
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: () => api.post('auth/logout'),
     onSuccess: () => {
-      queryCleint.removeQueries({ queryKey: meQueryOptions.queryKey });
+      queryClient.resetQueries();
+    },
+    onError: () => {
+      showToast('네트워크 오류로 인해 로그아웃에 실패했습니다.', 'error');
     },
   });
 }

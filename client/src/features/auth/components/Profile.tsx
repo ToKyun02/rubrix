@@ -1,6 +1,6 @@
 import { useLogout } from '@/features/auth/hooks/queries';
 import type { User } from '@/features/auth/hooks/types';
-import { Link, useNavigate } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { useEffect, useRef, useState } from 'react';
 
 interface ProfileProps {
@@ -10,7 +10,6 @@ interface ProfileProps {
 export function Profile({ user }: ProfileProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
   const logout = useLogout();
 
   useEffect(() => {
@@ -34,12 +33,7 @@ export function Profile({ user }: ProfileProps) {
   }, [open]);
 
   const handleLogout = () => {
-    logout.mutate(undefined, {
-      onSuccess: () => {
-        setOpen(false);
-        navigate({ to: '/' });
-      },
-    });
+    logout.mutate();
   };
 
   return (
