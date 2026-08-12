@@ -9,19 +9,32 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
+import { ApiCookieAuth, ApiParam, ApiTags } from '@nestjs/swagger';
 import type { Request } from 'express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateSubmissionDto } from './dtos/create-submission.dto';
 import { ListSubmissionsQueryDto } from './dtos/list-submissions-query.dto';
+import {
+  SubmissionDetailResponseDto,
+  SubmissionListItemResponseDto,
+  SubmissionResponseDto,
+  SubmissionStatsResponseDto,
+  SubmissionSummaryItemResponseDto,
+} from './dtos/submission-response.dto';
 import { SubmissionService } from './submission.service';
 
+@ApiTags('submissions')
+@ApiCookieAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('submissions')
 export class SubmissionController {
   constructor(private readonly submissionService: SubmissionService) {}
 
   @Get()
-  findAll(@Query() query: ListSubmissionsQueryDto, @Req() req: Request) {
+  findAll(
+    @Query() query: ListSubmissionsQueryDto,
+    @Req() req: Request,
+  ): Promise<SubmissionListItemResponseDto[]> {
     if (req.user == null) {
       throw new UnauthorizedException();
     }
@@ -32,7 +45,7 @@ export class SubmissionController {
   }
 
   @Get('stats')
-  stats(@Req() req: Request) {
+  stats(@Req() req: Request): Promise<SubmissionStatsResponseDto> {
     if (req.user == null) {
       throw new UnauthorizedException();
     }
@@ -40,7 +53,7 @@ export class SubmissionController {
   }
 
   @Get('summary')
-  summary(@Req() req: Request) {
+  summary(@Req() req: Request): Promise<SubmissionSummaryItemResponseDto[]> {
     if (req.user == null) {
       throw new UnauthorizedException();
     }
@@ -48,7 +61,11 @@ export class SubmissionController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string, @Req() req: Request) {
+  @ApiParam({ name: 'id', format: 'uuid' })
+  findOne(
+    @Param('id') id: string,
+    @Req() req: Request,
+  ): Promise<SubmissionDetailResponseDto> {
     if (req.user == null) {
       throw new UnauthorizedException();
     }
@@ -56,7 +73,10 @@ export class SubmissionController {
   }
 
   @Post()
-  create(@Body() dto: CreateSubmissionDto, @Req() req: Request) {
+  create(
+    @Body() dto: CreateSubmissionDto,
+    @Req() req: Request,
+  ): Promise<SubmissionResponseDto> {
     if (req.user == null) {
       throw new UnauthorizedException();
     }
