@@ -25,16 +25,14 @@ const SEVERITY_COLOR: Record<Severity, string> = {
 
 function RouteComponent() {
   const { id } = Route.useParams();
-  const { data: submission, isPending, isError } = useSubmission(id);
+  const { data: submission, isSuccess } = useSubmission(id);
   const { data: rounds } = useSubmissionList(
     submission?.assignmentId ?? '',
     !!submission,
   );
 
-  if (isPending)
+  if (!isSuccess)
     return <div className="text-muted p-7 text-sm">로딩 중...</div>;
-  if (isError || !submission)
-    return <div className="text-red p-7 text-sm">불러오기 실패</div>;
 
   return (
     <div className="mx-auto max-w-200 px-6 py-7">

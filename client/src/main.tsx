@@ -5,10 +5,19 @@ import { OverlayProvider } from 'overlay-kit';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Spinner } from './atom-components/Spinner';
+import { ThemeProvider } from './features/theme/providers/ThemeProvider';
 import './index.css';
 import { routeTree } from './routeTree.gen';
+import { isClientError } from './utils/networkHelper';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      throwOnError: true,
+      retry: (failCnt, error) => !isClientError(error) && failCnt < 1,
+    },
+  },
+});
 
 const router = createRouter({
   routeTree,
@@ -17,6 +26,7 @@ const router = createRouter({
     <Spinner className="fixed top-1/2 left-1/2 size-10" />
   ),
   defaultPendingMinMs: 500,
+  notFoundMode: 'root',
 });
 
 declare module '@tanstack/react-router' {
@@ -28,10 +38,12 @@ declare module '@tanstack/react-router' {
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <OverlayProvider>
-        <RouterProvider router={router} />
-      </OverlayProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
+      <ThemeProvider>
+        <OverlayProvider>
+          <RouterProvider router={router} />
+        </OverlayProvider>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </ThemeProvider>
     </QueryClientProvider>
   </StrictMode>,
 );

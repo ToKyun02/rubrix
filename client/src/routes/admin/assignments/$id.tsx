@@ -8,10 +8,9 @@ export const Route = createFileRoute('/admin/assignments/$id')({
 
 function RouteComponent() {
   const { id } = Route.useParams();
-  const { data, isPending, isError } = useAssignment(id);
+  const { data, isSuccess } = useAssignment(id);
 
-  if (isPending) return <div className="text-muted text-sm">로딩 중...</div>;
-  if (isError) return <div className="text-red text-sm">불러오기 실패</div>;
+  if (!isSuccess) return <div className="text-muted text-sm">로딩 중...</div>;
 
   return <AssignmentEditForm assignment={data} />;
 }

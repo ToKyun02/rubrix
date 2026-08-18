@@ -14,6 +14,7 @@ export function useGithubAppStatus() {
       const data = await api.get('github-app/status').json();
       return GithubAppStatusSchema.parse(data);
     },
+    throwOnError: false,
   });
 }
 
@@ -25,5 +26,6 @@ export function useGithubRepos(enabled: boolean) {
       return GithubRepoListSchema.parse(data);
     },
     enabled,
+    throwOnError: false,
   });
 }

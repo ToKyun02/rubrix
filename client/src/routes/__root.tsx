@@ -2,8 +2,9 @@ import Link from '@/atom-components/Link';
 import LogoText from '@/atom-components/LogoText';
 import { Profile } from '@/features/auth/components/Profile';
 import { useMe } from '@/features/auth/hooks/queries';
+import NotFound from '@/features/error/components/NotFound';
+import { RootErrorBoundary } from '@/features/error/components/RootErrorBoundary';
 import ThemeToggleButton from '@/features/theme/components/ThemeToggleButton';
-import { ThemeProvider } from '@/features/theme/providers/ThemeProvider';
 
 import type { QueryClient } from '@tanstack/react-query';
 import {
@@ -16,11 +17,11 @@ import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 
 export default function RootLayout() {
   return (
-    <ThemeProvider>
+    <>
       <Header />
       <Outlet />
       <TanStackRouterDevtools />
-    </ThemeProvider>
+    </>
   );
 }
 
@@ -49,4 +50,6 @@ export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
 }>()({
   component: RootLayout,
+  errorComponent: RootErrorBoundary,
+  notFoundComponent: NotFound,
 });
