@@ -13,7 +13,6 @@ export const Route = createFileRoute('/submissions/$id')({
     const me = await context.queryClient
       .ensureQueryData(meQueryOptions)
       .catch(() => null);
-    console.log(me);
     if (me == null) throw redirect({ to: '/login' });
   },
   component: RouteComponent,
