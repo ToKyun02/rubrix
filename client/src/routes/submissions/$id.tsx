@@ -1,13 +1,20 @@
 import { Spinner } from '@/atom-components/Spinner';
 import { Card } from '@/composition-components/Card';
+import { meQueryOptions } from '@/features/auth/hooks/queries';
 import {
   useSubmission,
   useSubmissionList,
 } from '@/features/submission/hooks/queries';
 import type { Severity } from '@/features/submission/hooks/types';
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute, Link, redirect } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/submissions/$id')({
+  beforeLoad: async ({ context }) => {
+    const me = await context.queryClient
+      .ensureQueryData(meQueryOptions)
+      .catch(() => null);
+    if (me != null) throw redirect({ to: '/login' });
+  },
   component: RouteComponent,
 });
 
