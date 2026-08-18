@@ -69,6 +69,7 @@ export function useSubmissionList(assignmentId: string, enabled: boolean) {
       return z.array(SubmissionSummarySchema).parse(data);
     },
     enabled,
+    throwOnError: false,
   });
 }
 

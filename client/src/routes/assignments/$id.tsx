@@ -15,11 +15,10 @@ export const Route = createFileRoute('/assignments/$id')({
 
 function RouteComponent() {
   const { id } = Route.useParams();
-  const { data: assignment, isPending, isError } = useAssignment(id);
+  const { data: assignment, isSuccess } = useAssignment(id);
   const { isDark } = useTheme();
 
-  if (isPending) return <div className="text-muted text-sm">로딩 중...</div>;
-  if (isError) return <div className="text-red text-sm">불러오기 실패</div>;
+  if (!isSuccess) return <div className="text-muted text-sm">로딩 중...</div>;
 
   return (
     <div className="mx-auto max-w-270 px-6 py-7">

@@ -11,10 +11,10 @@ import {
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiParam,
   ApiTags,
-  getSchemaPath,
 } from '@nestjs/swagger';
 import { AdminGuard } from '../auth/guards/admin.guard';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -42,16 +42,9 @@ export class AdminAssignmentController {
 
   @Get(':id')
   @ApiParam({ name: 'id', format: 'uuid' })
-  @ApiOkResponse({
-    description: '해당 ID의 과제가 없으면 null을 반환합니다.',
-    schema: {
-      nullable: true,
-      allOf: [{ $ref: getSchemaPath(AssignmentDetailResponseDto) }],
-    },
-  })
-  findOne(
-    @Param('id') id: string,
-  ): Promise<AssignmentDetailResponseDto | null> {
+  @ApiOkResponse({ type: AssignmentDetailResponseDto })
+  @ApiNotFoundResponse({ description: '해당 ID의 과제가 없습니다.' })
+  findOne(@Param('id') id: string): Promise<AssignmentDetailResponseDto> {
     return this.assignmentService.findOne(id);
   }
 

@@ -1,13 +1,20 @@
 import { Spinner } from '@/atom-components/Spinner';
 import { Card } from '@/composition-components/Card';
+import { meQueryOptions } from '@/features/auth/hooks/queries';
 import {
   useSubmission,
   useSubmissionList,
 } from '@/features/submission/hooks/queries';
 import type { Severity } from '@/features/submission/hooks/types';
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute, Link, redirect } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/submissions/$id')({
+  beforeLoad: async ({ context }) => {
+    const me = await context.queryClient
+      .ensureQueryData(meQueryOptions)
+      .catch(() => null);
+    if (me == null) throw redirect({ to: '/login' });
+  },
   component: RouteComponent,
 });
 
@@ -25,16 +32,14 @@ const SEVERITY_COLOR: Record<Severity, string> = {
 
 function RouteComponent() {
   const { id } = Route.useParams();
-  const { data: submission, isPending, isError } = useSubmission(id);
+  const { data: submission, isSuccess } = useSubmission(id);
   const { data: rounds } = useSubmissionList(
     submission?.assignmentId ?? '',
     !!submission,
   );
 
-  if (isPending)
+  if (!isSuccess)
     return <div className="text-muted p-7 text-sm">로딩 중...</div>;
-  if (isError || !submission)
-    return <div className="text-red p-7 text-sm">불러오기 실패</div>;
 
   return (
     <div className="mx-auto max-w-200 px-6 py-7">

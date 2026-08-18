@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Prisma } from '../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateAssignmentDto } from './dtos/create-assignment.dto';
@@ -34,11 +38,15 @@ export class AssignmentService {
     return this.paginate(query, { publishedAt: { not: null } });
   }
 
-  findOne(id: string) {
-    return this.prisma.assignment.findUnique({
+  async findOne(id: string) {
+    const assignment = await this.prisma.assignment.findUnique({
       where: { id },
       include: { rubricItems: true },
     });
+
+    if (!assignment) throw new NotFoundException('과제를 찾을 수 없습니다.');
+
+    return assignment;
   }
 
   create(dto: CreateAssignmentDto) {

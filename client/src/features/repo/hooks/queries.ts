@@ -17,6 +17,7 @@ export function useAssignmentRepo(assignmentId: string) {
       const data = await api.get(`repos/${assignmentId}`).json();
       return RepoSchema.nullable().parse(data);
     },
+    throwOnError: false,
   });
 }
 
@@ -47,5 +48,6 @@ export function usePullRequests(assignmentId: string, enabled: boolean) {
       return z.array(PullRequestSchema).parse(data);
     },
     enabled,
+    throwOnError: false,
   });
 }

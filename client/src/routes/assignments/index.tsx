@@ -17,13 +17,12 @@ export const Route = createFileRoute('/assignments/')({
 function RouteComponent() {
   const { page = 1 } = Route.useSearch();
   const navigate = Route.useNavigate();
-  const { data, isPending, isError } = useAssignments({
+  const { data, isSuccess } = useAssignments({
     page,
     pageSize: PAGE_SIZE,
   });
 
-  if (isPending) return <div className="text-muted text-sm">로딩 중...</div>;
-  if (isError) return <div className="text-red text-sm">불러오기 실패</div>;
+  if (!isSuccess) return <div className="text-muted text-sm">로딩 중...</div>;
 
   const totalPages = Math.max(1, Math.ceil(data.total / PAGE_SIZE));
 
